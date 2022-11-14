@@ -24,7 +24,7 @@ export default class Camera {
     setupInstance() {
         const { width, height } = this.sizes.viewport;
         this.instance = new THREE.PerspectiveCamera(75, width / height, 0.1, 100);
-        this.instance.position.set(-29, 19, 6);
+        this.instance.position.set(-10, 0, 0);
         this.instance.rotation.x = -1.16;
         this.instance.rotation.y = -0.29;
         this.instance.rotation.z = 0;
@@ -50,7 +50,7 @@ export default class Camera {
     }
 
     setupOrbitControls() {
-        // this.orbitControls = new OrbitControls(this.instance, this.renderer.instance.domElement);
+        this.orbitControls = new OrbitControls(this.instance, this.renderer.instance.domElement);
         // this.orbitControls.enableDamping = true;
 
         // this.time.on('tick', () => this.orbitControls.update());

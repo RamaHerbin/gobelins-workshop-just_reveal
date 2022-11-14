@@ -9,9 +9,6 @@ import Renderer from "./Renderer";
 import Sizes from "../utils/Sizes";
 import Camera from "./Camera";
 import Scene from "./Scene";
-import String from "./String";
-
-import music from "/static/feel-good.mp3";
 
 /**
  * App constructor.
@@ -46,10 +43,9 @@ export default class Application {
     this.setupGUI();
 
     this.setupCamera();
-    this.setupGlow();
+    // this.setupGlow();
 
     this.setupMesh();
-    this.setupAudio();
     this.onFrame();
 
     // this.onFrame = this.onFrame.bind(this);
@@ -104,98 +100,19 @@ export default class Application {
     this.composer.addPass(bloomPass);
   }
 
-
-
   setupMesh() {
     // Lines
-    this.colors = [
-      new THREE.Vector3(1, 0, 0),
-      new THREE.Vector3(0, 1, 0),
-      new THREE.Vector3(0, 0, 1),
-      new THREE.Vector3(1, 0, 1),
-      new THREE.Vector3(1, 1, 0),
-      new THREE.Vector3(0, 1, 1),
-    ];
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(geometry, material);
 
-    const stringPositions = [];
-    const stringColors = [];
-    const divisions = 300;
-
-    for (let i = 0; i < divisions; i++) {
-      stringPositions.push((i / divisions) * 100, 0, 0);
-      stringColors.push(1, 1, 1);
-    }
-
-    const LINE_NB = 6;
-
-    const group = new THREE.Group();
-
-    // Create lines, add to group
-    for (let j = 0; j < LINE_NB; j++) {
-      this.strings[j] = new String({
-        colors: stringColors,
-        positions: stringPositions,
-        stringIndex: j,
-      });
-
-      this.strings[j].position.z = j;
-      group.add(this.strings[j]);
-    }
-
-    this.scene.instance.add(group);
-  }
-
-  setupAudio() {
-    // Setup audio on click
-    // to avoid anti-autoplay policy
-    const onBeat = () => {
-      // console.log("onBeat");
-
-      for (let index = 0; index < this.strings.length; index++) {
-        this.strings[index].changeColor(this.colors[index]);
-        this.percentAnim[index] > 1 ? (this.percentAnim[index] = 0) : "";
-      }
-    };
-
-    let audioEvent = async (e) => {
-      this.audio = (await import("../utils/audio")).default;
-
-      this.audio.start({
-        onBeat: onBeat,
-        live: false,
-        src: music,
-        // debug: true
-      });
-
-      document.querySelector(".consigne").classList.add("hide");
-      document.querySelector(".logo-gobelins").classList.add("hide");
-      window.removeEventListener("click", audioEvent);
-    };
-    window.addEventListener("click", audioEvent);
+    this.scene.instance.add(cube);
   }
 
   onFrame = () => {
     requestAnimationFrame(this.onFrame);
     this.renderer.render(this.scene.instance, this.camera.instance);
 
-    this.composer.render();
-
-    if (this.audio && this.audio.isPlaying) {
-      this.audio.update();
-
-      this.time += 0.01;
-
-      for (let index = 0; index < this.strings.length; index++) {
-        this.percentAnim[index] += 0.01 + 0.01 * (index / 2);
-
-        this.strings[index].update(
-          this.audio.values[index],
-          this.percentAnim[index],
-          this.time,
-          Math.random(),
-          this.audio.values[0]
-        );
-      }
-    }
+    // this.composer.render();
   };
 }

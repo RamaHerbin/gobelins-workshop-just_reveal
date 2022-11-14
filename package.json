@@ -12,6 +12,8 @@
     "sass": "^1.56.1"
   },
   "dependencies": {
-    "normalize.css": "^8.0.1"
+    "dat.gui": "^0.7.9",
+    "normalize.css": "^8.0.1",
+    "three": "^0.146.0"
   }
 }
