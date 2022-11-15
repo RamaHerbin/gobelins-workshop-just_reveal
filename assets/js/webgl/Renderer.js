@@ -14,8 +14,6 @@ export default class Renderer {
  *
  */
   constructor(_$canvas, _viewport) {
-    console.log('_$canvas :>> ', _$canvas);
-
     this.instance = new THREE.WebGLRenderer({
       antialias: true, 
       canvas: _$canvas,

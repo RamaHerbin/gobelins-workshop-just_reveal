@@ -31,14 +31,14 @@ export default class Camera {
         // this.instance.lookAt(new THREE.Vector3());
         this.container.add(this.instance);
 
-        let fCamera = this.gui.addFolder("Camera");
+        // let fCamera = this.gui.addFolder("Camera");
 
-        fCamera.add(this.instance.position, "x", -70, 30, 1);
-        fCamera.add(this.instance.position, "y", -30, 30, 1);
-        fCamera.add(this.instance.position, "z", -30, 60, 1);
-        fCamera.add(this.instance.rotation, "x", -2, 1, .01);
-        fCamera.add(this.instance.rotation, "y", -1, 1, .01);
-        fCamera.add(this.instance.rotation, "z", -1, 1, .01);
+        // fCamera.add(this.instance.position, "x", -70, 30, 1);
+        // fCamera.add(this.instance.position, "y", -30, 30, 1);
+        // fCamera.add(this.instance.position, "z", -30, 60, 1);
+        // fCamera.add(this.instance.rotation, "x", -2, 1, .01);
+        // fCamera.add(this.instance.rotation, "y", -1, 1, .01);
+        // fCamera.add(this.instance.rotation, "z", -1, 1, .01);
 
         this.sizes.on('resize', () => {
             const { width, height } = this.sizes.viewport;

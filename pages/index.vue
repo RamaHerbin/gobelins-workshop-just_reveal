@@ -1,5 +1,4 @@
 <template>
-
     <div>
         <WebGl/>
     </div>

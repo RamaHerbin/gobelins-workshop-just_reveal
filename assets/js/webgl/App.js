@@ -4,11 +4,13 @@ import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js"
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 
-import * as dat from "dat.gui";
+  // import * as dat from "dat.gui";
+
 import Renderer from "./Renderer";
 import Sizes from "../utils/Sizes";
 import Camera from "./Camera";
 import Scene from "./Scene";
+import World from "./World";
 
 /**
  * App constructor.
@@ -46,6 +48,7 @@ export default class Application {
     // this.setupGlow();
 
     this.setupMesh();
+    this.setupWorld();
     this.onFrame();
 
     // this.onFrame = this.onFrame.bind(this);
@@ -56,10 +59,16 @@ export default class Application {
     this.config.debug = window.location.hash === "#debug";
   }
 
-  setupGUI() {
-    this.gui = new dat.GUI();
-    let fSettings = this.gui.addFolder("Settings");
-    fSettings.open();
+  async setupGUI() {
+
+
+
+    //   this.guiTest = (await import("dat.gui")).default;
+    //   console.log('this.guiTest :>> ', this.guiTest);
+
+    // this.gui = new this.guiTest.dat.GUI();
+    // let fSettings = this.gui.addFolder("Settings");
+    // fSettings.open();
   }
 
   setupCamera() {
@@ -102,11 +111,18 @@ export default class Application {
 
   setupMesh() {
     // Lines
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const cube = new THREE.Mesh(geometry, material);
+    const geometry = new THREE.SphereGeometry( 15, 32, 16 );
+    const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+    const sphere = new THREE.Mesh( geometry, material );
+    // this.scene.instance.add( sphere );
 
-    this.scene.instance.add(cube);
+  }
+
+
+  setupWorld() {
+    //TODO: INIT WORLD
+    let world = new World();
+    this.scene.instance.add(world.container);
   }
 
   onFrame = () => {
