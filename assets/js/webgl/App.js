@@ -19,6 +19,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
  * App constructor.
  * @constructor
  */
+
+let time = 0;
+
 export default class Application {
   constructor(_params) {
     this.$canvas = _params.$canvas;
@@ -50,9 +53,10 @@ export default class Application {
     this.setupCamera();
     // this.setupGlow();
 
-    this.setupMesh();
-    this.setupSphere();
-    this.setupLights();
+    // this.setupMesh();
+    // this.setupSphere();
+    // this.setupLights();
+    // this.setupClouds();
    // this.setupLoader();
 
     this.setupWorld();
@@ -117,21 +121,6 @@ export default class Application {
   }
 
 
-  setupLights() {
-    const ambientLight = new THREE.AmbientLight( 0xcccccc, 0.5 );
-    this.scene.instance.add( ambientLight );
-
-    const pointLight = new THREE.PointLight (0xffff00, 0.5);
-    this.scene.instance.add( pointLight );
-    pointLight.position.x = -3;
-    pointLight.position.y = 5;
-    pointLight.position.z = -5;
-
-
-
-  }
-
-
 
   setupMesh() {
     // Lines
@@ -151,73 +140,16 @@ export default class Application {
 
 
 
-  setupSphere() {
-    const geometry = new THREE.SphereGeometry( 2, 128, 128 );
-    const material = new THREE.MeshStandardMaterial( { color: 0x00ffff , metalness : 0.5 , roughness : 0.5 } );
-    // const normalMap = new THREE.TextureLoader().load( '/img/map_earth_color.jpg' );
-    const displacement = new THREE.TextureLoader().load('/img/bump_maps_custom_v2.png');
-    const texture = new THREE.TextureLoader().load('/img/map_earth_color.jpg');
 
-    const sphere = new THREE.Mesh( geometry, material );
-    
-     material.map = texture;
-    // material.normalMap = normalMap;
 
-    material.displacementMap = displacement;
-    material.displacementScale = 0.1;
-    material.displacementBias = 0.1;
+
   
-
-    this.scene.instance.add( sphere );
-
-  }
-
-
-
-  setupLoader() {
-
-  // Instantiate a loader
-  const loader = new GLTFLoader();
-
-  // Load a glTF resource
-  loader.load(
-    // resource URL
-    'assets/3Dmodel/paper_plane.scene.gltf',
-
-    // called when the resource is loaded
-    function ( gltf ) {
-  
-      this.gltf.animations; // Array<THREE.AnimationClip>
-      this.gltf.scene; // THREE.Group
-      this.gltf.scenes; // Array<THREE.Group>
-      this.gltf.cameras; // Array<THREE.Camera>
-      this.gltf.asset; // Object
-
-      this.gltf.scale.set(2,2,2);
-      this.gltf.position.set(0, 0, 1);
-
-      this.scene.add( gltf.scene );
-    },
-
-    // called while loading is progressing
-    function ( xhr ) {
-  
-      console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-  
-    },
-    // called when loading has errors
-    function ( error ) {
-  
-      console.log( 'error happened' );
-  
-    }
-  );
-  }
-
-
   onFrame = () => {
     requestAnimationFrame(this.onFrame);
     this.renderer.render(this.scene.instance, this.camera.instance);
+    let tick = 0;
+    tick += 1;
+
 
     // this.composer.render();
   };
