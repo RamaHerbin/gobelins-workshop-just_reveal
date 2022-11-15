@@ -20,6 +20,7 @@ export default class World {
     // this.camera = _option.camera;
     // this.renderer = _option.renderer;
     // this.resources = _option.resources;
+    this.scene = _option.scene;
 
     this.container = new THREE.Object3D();
     this.container.matrixAutoUpdate = false;
@@ -36,7 +37,7 @@ export default class World {
 
 
     this.setupSphere();
-    this.setupLights();
+    // this.setupLights();
     this.setupClouds();
 
 

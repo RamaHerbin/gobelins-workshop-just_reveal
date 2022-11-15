@@ -51,15 +51,8 @@ export default class Application {
     this.setupGUI();
 
     this.setupCamera();
-    // this.setupGlow();
-
-    // this.setupMesh();
-    // this.setupSphere();
-    // this.setupLights();
-    // this.setupClouds();
-   // this.setupLoader();
-
     this.setupWorld();
+
     this.onFrame();
 
     // this.onFrame = this.onFrame.bind(this);
@@ -97,53 +90,14 @@ export default class Application {
     // });
   }
 
-  setupGlow() {
-    const renderScene = new RenderPass(
-      this.scene.instance,
-      this.camera.instance
-    );
-
-    const bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(window.innerWidth, window.innerHeight),
-      1.5,
-      0.4,
-      0.85
-    );
-
-    bloomPass.threshold = 0;
-    bloomPass.strength = 2;
-    bloomPass.radius = 0.5;
-
-    this.composer = new EffectComposer(this.renderer.instance);
-
-    this.composer.addPass(renderScene);
-    this.composer.addPass(bloomPass);
-  }
-
-
-
-  setupMesh() {
-    // Lines
-    const geometry = new THREE.SphereGeometry( 15, 32, 16 );
-    const material = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-    const sphere = new THREE.Mesh( geometry, material );
-    // this.scene.instance.add( sphere );
-
-  }
-
 
   setupWorld() {
     //TODO: INIT WORLD
-    let world = new World();
+    let world = new World({scene: this.scene});
     this.scene.instance.add(world.container);
   }
 
 
-
-
-
-
-  
   onFrame = () => {
     requestAnimationFrame(this.onFrame);
     this.renderer.render(this.scene.instance, this.camera.instance);
