@@ -1,5 +1,8 @@
 import * as THREE from "three";
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { gsap } from "gsap";
+
+import Globe from "./Globe";
 
 // import Materials from './Materials';
 // import Controls from './Controls';
@@ -32,11 +35,11 @@ export default class World {
 
     // this.setStartingScreen();
 
-
     this.setupSphere();
 
     this.setupClouds();
 
+    // this.setupGlobe();
 
   }
 
@@ -49,7 +52,6 @@ export default class World {
     const { loaded, toLoad } = this.resources.loader;
     if (loaded === toLoad) this.start();
   }
-
 
   setControls() {
     this.controls = new Controls({
@@ -64,46 +66,57 @@ export default class World {
     });
   }
 
+  setupGlobe() {
+    this.globe = new Globe();
 
+  this.scene.instance.add(this.globe.container);
+  }
 
   setupSphere() {
-    const geometry = new THREE.SphereGeometry( 2, 128, 128 );
-    const material = new THREE.MeshStandardMaterial( { color: 0xFfffff , metalness : 0.5 , roughness : 0.5 } );
+    const geometry = new THREE.SphereGeometry(2, 128, 128);
+    const material = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      metalness: 0.5,
+      roughness: 0.5,
+    });
     // const normalMap = new THREE.TextureLoader().load( '/img/map_earth_color.jpg' );
-    const displacement = new THREE.TextureLoader().load('/img/bump_maps_custom_v2.webp');
-    const texture = new THREE.TextureLoader().load('/img/map_earth_color.jpg');
+    const displacement = new THREE.TextureLoader().load(
+      "/img/bump_maps_custom_v2.webp"
+    );
+    const texture = new THREE.TextureLoader().load("/img/map_earth_color.jpg");
 
-    const sphere = new THREE.Mesh( geometry, material );
-    
-     material.map = texture;
+    const sphere = new THREE.Mesh(geometry, material);
+
+    material.map = texture;
     // material.normalMap = normalMap;
 
     material.displacementMap = displacement;
     material.displacementScale = 0.075;
     material.displacementBias = 0.1;
 
-    this.scene.instance.add( sphere );
+    this.scene.instance.add(sphere);
   }
-
 
   setupClouds() {
-  const geometry = new THREE.SphereGeometry( 2.25, 128, 128 );
-  const material = new THREE.MeshStandardMaterial( { color: 0xffffff , metalness : 0.5 , roughness : 0.5 } );
-  const texture = new THREE.TextureLoader().load('/img/map_cloud.jpg');
+    const geometry = new THREE.SphereGeometry(2.25, 128, 128);
+    const material = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      metalness: 0.5,
+      roughness: 0.5,
+    });
+    const texture = new THREE.TextureLoader().load("/img/map_cloud.jpg");
 
-  const clouds = new THREE.Mesh( geometry, material );
+    const clouds = new THREE.Mesh(geometry, material);
 
-  material.map = texture;
-  material.transparent = true;
-  material.opacity = 0.3;
+    material.map = texture;
+    material.transparent = true;
+    material.opacity = 0.3;
 
-  this.scene.instance.add( clouds );
+    this.scene.instance.add(clouds);
+    gsap.to(clouds.rotation, { duration: 10, x: 100 });
 
-  //sphere.rotation.x = tick;
-
+    //sphere.rotation.x = tick;
   }
-
-
 
   // setupLights() {
   //   const ambientLight = new THREE.AmbientLight( 0xcccccc, 0.5 );
@@ -118,9 +131,4 @@ export default class World {
   // }
 
 
-
 }
-
-
-
-
