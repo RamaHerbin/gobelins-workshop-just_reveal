@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "dat.gui": "^0.7.9",
+    "gsap": "file:gsap-bonus.tgz",
     "normalize.css": "^8.0.1",
     "three": "^0.146.0"
   }

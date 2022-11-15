@@ -8,9 +8,6 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 // import Fox from "./Fox";
 // import Transition from "./Transition";
 
-
-// import modal from "/assets/model/rouen.gltf";
-
 export default class World {
   constructor(_option) {
     // this.time = _option.time;
@@ -37,12 +34,10 @@ export default class World {
 
 
     this.setupSphere();
-    // this.setupLights();
+
     this.setupClouds();
 
 
-
-    this.start();
   }
 
   setStartingScreen() {
@@ -55,17 +50,6 @@ export default class World {
     if (loaded === toLoad) this.start();
   }
 
-  async start() {
-    // this.setControls();
-    // this.setMaterial();
-
-    // await this.transition.firstTransition();
-
-    const gltfloader = new GLTFLoader();
-    const gltf = await gltfloader.loadAsync("/model/rouen.gltf");
-
-    this.container.add(gltf.scene);
-  }
 
   setControls() {
     this.controls = new Controls({
@@ -84,9 +68,9 @@ export default class World {
 
   setupSphere() {
     const geometry = new THREE.SphereGeometry( 2, 128, 128 );
-    const material = new THREE.MeshStandardMaterial( { color: 0x00ffff , metalness : 0.5 , roughness : 0.5 } );
+    const material = new THREE.MeshStandardMaterial( { color: 0xFfffff , metalness : 0.5 , roughness : 0.5 } );
     // const normalMap = new THREE.TextureLoader().load( '/img/map_earth_color.jpg' );
-    const displacement = new THREE.TextureLoader().load('/img/bump_maps_custom_v2.png');
+    const displacement = new THREE.TextureLoader().load('/img/bump_maps_custom_v2.webp');
     const texture = new THREE.TextureLoader().load('/img/map_earth_color.jpg');
 
     const sphere = new THREE.Mesh( geometry, material );
@@ -95,12 +79,10 @@ export default class World {
     // material.normalMap = normalMap;
 
     material.displacementMap = displacement;
-    material.displacementScale = 0.1;
+    material.displacementScale = 0.075;
     material.displacementBias = 0.1;
-  
 
     this.scene.instance.add( sphere );
-
   }
 
 

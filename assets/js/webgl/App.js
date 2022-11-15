@@ -65,8 +65,6 @@ export default class Application {
 
   async setupGUI() {
 
-
-
     //   this.guiTest = (await import("dat.gui")).default;
     //   console.log('this.guiTest :>> ', this.guiTest);
 
