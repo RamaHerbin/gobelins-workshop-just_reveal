@@ -35,6 +35,8 @@ export default class World {
 
     // this.setStartingScreen();
 
+    this.time = _option.time;
+
 
     this.setupSphere();
     // this.setupLights();
@@ -61,15 +63,16 @@ export default class World {
 
     // await this.transition.firstTransition();
 
-    const gltfloader = new GLTFLoader();
-    const gltf = await gltfloader.loadAsync("/model/rouen.gltf");
 
-    this.container.add(gltf.scene);
+    // const gltfloader = new GLTFLoader();
+    // const gltf = await gltfloader.loadAsync("/model/rouen.gltf");
+
+    // this.container.add(gltf.scene);
   }
 
   setControls() {
     this.controls = new Controls({
-      time: this.time,
+      // time: this.time,
       sizes: this.sizes,
     });
   }
@@ -84,20 +87,21 @@ export default class World {
 
   setupSphere() {
     const geometry = new THREE.SphereGeometry( 2, 128, 128 );
-    const material = new THREE.MeshStandardMaterial( { color: 0x00ffff , metalness : 0.5 , roughness : 0.5 } );
+    const material = new THREE.MeshStandardMaterial( { color: 0xffffff , metalness : 0.5 , roughness : 0.5 } );
     // const normalMap = new THREE.TextureLoader().load( '/img/map_earth_color.jpg' );
-    const displacement = new THREE.TextureLoader().load('/img/bump_maps_custom_v2.png');
+    const displacement = new THREE.TextureLoader().load('/img/bump_maps_custom_v2.webp');
     const texture = new THREE.TextureLoader().load('/img/map_earth_color.jpg');
 
     const sphere = new THREE.Mesh( geometry, material );
     
-     material.map = texture;
+    material.map = texture;
     // material.normalMap = normalMap;
 
     material.displacementMap = displacement;
     material.displacementScale = 0.1;
     material.displacementBias = 0.1;
   
+    sphere.rotation.y = 180;
 
     this.scene.instance.add( sphere );
 
@@ -105,19 +109,24 @@ export default class World {
 
 
   setupClouds() {
-  const geometry = new THREE.SphereGeometry( 2.25, 128, 128 );
-  const material = new THREE.MeshStandardMaterial( { color: 0xffffff , metalness : 0.5 , roughness : 0.5 } );
-  const texture = new THREE.TextureLoader().load('/img/map_cloud.jpg');
+  const geometry = new THREE.SphereGeometry( 2.2, 256, 256 );
+  const material = new THREE.MeshStandardMaterial( { color: 0xffffff , metalness : 0. , roughness : 1 } );
+  const texture = new THREE.TextureLoader().load('/img/clouds_map_v2.png');
 
   const clouds = new THREE.Mesh( geometry, material );
 
   material.map = texture;
   material.transparent = true;
-  material.opacity = 0.3;
+  material.opacity = 0.4;
 
   this.scene.instance.add( clouds );
 
-  //sphere.rotation.x = tick;
+  let x = clouds.rotation.x
+  let z = clouds.rotation.z
+
+  clouds.rotation.x = x + this.time;
+  clouds.rotation.z = z + this.time;
+
 
   }
 
