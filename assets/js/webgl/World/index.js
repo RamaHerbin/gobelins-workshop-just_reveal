@@ -1,4 +1,7 @@
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+
+import Globe from "./Globe";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { Water } from 'three/addons/objects/Water.js';
 
@@ -42,8 +45,10 @@ export default class World {
 
     // this.setStartingScreen();
 
-    this.time = _option.time;
 
+    this.setupGlobe();
+
+    this.time = _option.time;
 
     this.setupSphere();
     this.setupLights();
@@ -66,7 +71,6 @@ export default class World {
     if (loaded === toLoad) this.start();
   }
 
-
   setControls() {
     this.controls = new Controls({
       // time: this.time,
@@ -80,6 +84,12 @@ export default class World {
     });
   }
 
+  setupGlobe() {
+    this.globe = new Globe();
+
+
+    this.scene.instance.add(this.globe.container);
+  }
 
   setupSphere() {
     const globSize = 2;
@@ -119,10 +129,11 @@ export default class World {
 
 
     this.scene.instance.add( sphere );
+
   }
 
-
   setupClouds() {
+
     const globSize = 2;
 
 
@@ -146,7 +157,8 @@ export default class World {
   material.opacity = 0.4;
 
 
-  this.scene.instance.add( clouds );
+
+    this.scene.instance.add(clouds);
 
   let x = clouds.rotation.x
   let z = clouds.rotation.z
@@ -154,8 +166,9 @@ export default class World {
   clouds.rotation.x = 30 + x + this.time;
   clouds.rotation.z = 180 + z + this.time;
 
-  }
 
+    //sphere.rotation.x = tick;
+  }
 
 
   setupSea() {
@@ -352,9 +365,4 @@ addSkyGradient() {
 
 
 
-
 }
-
-
-
-
