@@ -49,7 +49,7 @@ export default class World {
     this.setupLights();
     // this.setupClouds();
     // this.ambientOcclusion()
-    this.setupSea();
+    // this.setupSea();
     // this.setupBg();
     this.addSkyGradient()
     this.water()
@@ -162,7 +162,7 @@ export default class World {
     const globSize = 2;
 
 
-    const geometry = new THREE.SphereGeometry( globSize+1.01, 256, 256 );
+    const geometry = new THREE.SphereGeometry( globSize + 1.01, 256, 256 );
     const material = new THREE.MeshStandardMaterial( { 
       color: 0x575757, 
       metalness : 0., 
@@ -227,7 +227,7 @@ export default class World {
 
     const globSize = 2;
 
-    const waterGeometry = new THREE.SphereGeometry( globSize + 1.02, 256, 256 );
+    const waterGeometry = new THREE.SphereGeometry( globSize + 1.02, 512, 512 );
     // const waterGeometry = new THREE.PlaneGeometry(1000, 1000 );
 
 
@@ -244,9 +244,11 @@ export default class World {
         } ),
         // sunDirection: new THREE.Vector3(),
         // sunColor: 0xffffff,
-        waterColor: 0x001e0f,
-        distortionScale: 3.7,
-        fog: this.scene.instance.fog !== undefined
+        waterColor: 0x3f4dc4,
+        distortionScale: 5.,
+        fog: this.scene.instance.fog !== undefined,
+        side: THREE.DoubleSide,
+
       }
     );
 
