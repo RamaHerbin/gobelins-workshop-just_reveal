@@ -9,3 +9,12 @@ body {
 }
 
 </style>
+
+<script setup>
+
+import { gsap } from "gsap";
+import { DrawSVGPlugin } from "gsap/DrawSVGPlugin.js";
+gsap.registerPlugin(DrawSVGPlugin);
+
+
+</script>

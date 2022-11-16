@@ -64,8 +64,6 @@ export default class Application {
 
   async setupGUI() {
 
-
-
     //   this.guiTest = (await import("dat.gui")).default;
     //   console.log('this.guiTest :>> ', this.guiTest);
 
@@ -92,8 +90,9 @@ export default class Application {
 
   setupWorld() {
     //TODO: INIT WORLD
-    let world = new World({scene: this.scene, time: this.time});
+    let world = new World({scene: this.scene, time: this.time, renderer : this.renderer});
     this.scene.instance.add(world.container);
+
   }
 
 
