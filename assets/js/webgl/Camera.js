@@ -28,6 +28,7 @@ export default class Camera {
         this.instance.rotation.x = -1.16;
         this.instance.rotation.y = -0.29;
         this.instance.rotation.z = 0;
+
         // this.instance.lookAt(new THREE.Vector3());
         this.container.add(this.instance);
 

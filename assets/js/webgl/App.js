@@ -20,7 +20,6 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
  * @constructor
  */
 
-let time = 0;
 
 export default class Application {
   constructor(_params) {
@@ -91,17 +90,16 @@ export default class Application {
 
   setupWorld() {
     //TODO: INIT WORLD
-    let world = new World({scene: this.scene});
+    let world = new World({scene: this.scene, time: this.time, renderer : this.renderer});
     this.scene.instance.add(world.container);
+
   }
 
 
   onFrame = () => {
     requestAnimationFrame(this.onFrame);
     this.renderer.render(this.scene.instance, this.camera.instance);
-    let tick = 0;
-    tick += 1;
-
+    this.time += 0.1;
 
     // this.composer.render();
   };
