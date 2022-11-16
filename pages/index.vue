@@ -1,6 +1,7 @@
 <template>
     <div>
         <WebGl/>
+        <Timeline/>
     </div>
 </template>
 
