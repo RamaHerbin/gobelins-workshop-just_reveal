@@ -1,6 +1,5 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { gsap } from "gsap";
 
 import Globe from "./Globe";
 
@@ -35,11 +34,11 @@ export default class World {
 
     // this.setStartingScreen();
 
-    this.setupSphere();
+    // this.setupSphere();
 
-    this.setupClouds();
+    // this.setupClouds();
 
-    // this.setupGlobe();
+    this.setupGlobe();
 
   }
 
@@ -69,7 +68,7 @@ export default class World {
   setupGlobe() {
     this.globe = new Globe();
 
-  this.scene.instance.add(this.globe.container);
+    this.scene.instance.add(this.globe.container);
   }
 
   setupSphere() {
@@ -87,7 +86,7 @@ export default class World {
 
     const sphere = new THREE.Mesh(geometry, material);
 
-    material.map = texture;
+    // material.map = texture;
     // material.normalMap = normalMap;
 
     material.displacementMap = displacement;
@@ -113,7 +112,6 @@ export default class World {
     material.opacity = 0.3;
 
     this.scene.instance.add(clouds);
-    gsap.to(clouds.rotation, { duration: 10, x: 100 });
 
     //sphere.rotation.x = tick;
   }
