@@ -8,12 +8,15 @@ export default class Globe {
   /*
    * @constructor
    */
-  constructor() {
+  constructor(_option) {
 
     this.container = new THREE.Object3D();
     this.container.matrixAutoUpdate = false;
+    this.scene = _option.scene;
 
     this.init();
+    this.setupSea();
+    // this.water();
   }
 
   async init() {
@@ -30,7 +33,7 @@ export default class Globe {
         .hexPolygonMargin(0.7)
       .showAtmosphere(true)
       .atmosphereColor("#3a228a")
-      .atmosphereAltitude(0.25)
+      .atmosphereAltitude(0.5)
       .hexPolygonColor('#ffffff')
 
       // .hexPolygonColor((e) => {
@@ -50,9 +53,9 @@ export default class Globe {
 
     const globeMaterial = globe.globeMaterial();
     console.log('globeMaterial :>> ', globeMaterial);
-    globeMaterial.color = new THREE.Color(0x3a228a);
-    globeMaterial.emissive = new THREE.Color(0x220038);
-    globeMaterial.emissiveIntensity = 0.5;
+    globeMaterial.color = new THREE.Color(0xffffff);
+    globeMaterial.emissive = new THREE.Color(0x040B4A);
+    globeMaterial.emissiveIntensity = 0.8;
     globeMaterial.shininess = 0.7;
 
     let loader = new THREE.TextureLoader()
@@ -67,8 +70,14 @@ export default class Globe {
     // globeMaterial.normalMap = normalMap;
 
     globeMaterial.displacementMap = displacement;
-    globeMaterial.displacementScale = 3;
+    globeMaterial.displacementScale = 8;
     globeMaterial.displacementBias = 1;
+
+    globe.receiveShadow = true;
+    globe.castShadow = true;
+    globe.scale.set(0.2, 0.2, 0.2)
+    globe.rotation.set(-1, 4, -1)
+
 
 
     setTimeout(() => {
@@ -109,5 +118,102 @@ export default class Globe {
 
     // NOTE Cool stuff
     // globeMaterial.wireframe = true;
+
   }
+
+
+
+
+  // ADD WATER
+
+
+
+
+  setupSea() {
+    const geometry = new THREE.SphereGeometry(20.3, 256, 256);
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x808080,
+      metalness: 0,
+      roughness: 1,
+    });
+
+    const vertexShader = `
+    varying vec3 vNormal;
+    
+    void main()
+    {
+      vNormal = normalize( normalMatrix * normal );
+      gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+    }`;
+
+    const fragmentShader = `
+    varying vec3 vNormal;
+
+    void main()
+    {
+      float intensity = pow( 0.8 - dot( vNormal, vec3( 0, 0, 1.0 ) ), 12.0 );
+      gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * intensity;
+    }`;
+
+    const uniforms = {
+      // topColor: { value: new THREE.Color(SKY_COLOR) },
+      // bottomColor: { value: new THREE.Color(GROUND_COLOR) }
+    };
+
+    const atmosMat = new THREE.ShaderMaterial({
+      // uniforms,
+      vertexShader,
+      fragmentShader,
+      side: THREE.FrontSide,
+      blending: THREE.NormalBlending,
+      // transparent: true
+    });
+
+    const waves = new THREE.Mesh(geometry, atmosMat);
+    const sea = new THREE.Mesh(geometry, material);
+
+    sea.receiveShadow = true;
+    sea.castShadow = true;
+
+    waves.receiveShadow = true;
+    waves.castShadow = true;
+
+    // this.scene.instance.add(waves);
+    this.scene.instance.add( sea );
+  }
+
+  water() {
+    const waterGeometry = new THREE.SphereGeometry(3, 512, 512);
+    // const waterGeometry = new THREE.PlaneGeometry(1000, 1000 );
+
+    const water = new Water(waterGeometry, {
+      textureWidth: 512,
+      textureHeight: 512,
+      waterNormals: new THREE.TextureLoader().load(
+        "/textures/waternormals.jpg",
+        function (texture) {
+          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+        }
+      ),
+      // sunDirection: new THREE.Vector3(),
+      // sunColor: 0xffffff,
+      waterColor: 0x3f4dc4,
+      distortionScale: 5,
+      fog: this.scene.instance.fog !== undefined,
+      side: THREE.DoubleSide,
+    });
+
+    water.rotation.x = 0.5;
+    water.rotation.y = 3;
+    water.rotation.z = 0;
+
+    this.scene.instance.add(water);
+  }
+
+
+
+
+
+
+
 }
