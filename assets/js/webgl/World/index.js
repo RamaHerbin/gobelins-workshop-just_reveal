@@ -1,35 +1,27 @@
 import * as THREE from "three";
 
 import Globe from "./Globe";
+import Sky from "./Sky";
+import Marker from "./Marker";
+
+
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Water } from "three/addons/objects/Water.js";
-
 
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { SAOPass } from "three/addons/postprocessing/SAOPass.js";
-import Sky from "./Sky";
+//import Sky from "./Sky";
 import Skybox from "./Skybox.js"
 
 
-// import Materials from './Materials';
-// import Controls from './Controls';
-// import Torus from "./Torus";
-// import Plane from "./Plane";
-// import Fox from "./Fox";
-// import Transition from "./Transition";
+
 
 export default class World {
   constructor(_option) {
-    // this.time = _option.time;
-    // this.sizes = _option.sizes;
-    // this.debug = _option.debug;
-    // this.light = _option.light;
-    // this.camera = _option.camera;
-    // this.renderer = _option.renderer;
-    // this.resources = _option.resources;
+
     this.scene = _option.scene;
     this.renderer = _option.renderer;
     this.camera = _option.camera;
@@ -48,7 +40,9 @@ export default class World {
     // this.setStartingScreen();
 
     this.setupGlobe();
+
     // this.setupSky();
+
     this.time = _option.time;
 
     // this.setupSphere();
@@ -146,12 +140,15 @@ export default class World {
     this.scene.instance.add(sphere);
   }
 
-
+  setupMarker() {
+    this.marker = new Marker();
+    this.scene.instance.add(this.marker.container);
+  }
+  
   lightAxisHelp() {
     const axesHelper = new THREE.AxesHelper( 20 );
     this.scene.instance.add( axesHelper );
   }
-
 
   setupLights() {
 

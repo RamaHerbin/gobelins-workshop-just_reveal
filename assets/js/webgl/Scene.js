@@ -4,7 +4,6 @@ export default class Scene {
   constructor(_params) {
     this.app = _params.app
 
-    console.log(this.app.time)
     this.instance = new THREE.Scene();
 
     // const ambient = new THREE.AmbientLight(0xaafff0);
