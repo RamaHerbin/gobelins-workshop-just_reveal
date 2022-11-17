@@ -122,3 +122,4 @@ dist
 yarn.lock
 
 !gsap-bonus.tgz
+!threeglobe-custom.tgz

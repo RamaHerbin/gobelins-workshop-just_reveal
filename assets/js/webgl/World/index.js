@@ -43,7 +43,7 @@ export default class World {
 
     this.setupGlobe();
     this.setupSky();
-    this.setupMarker();
+    // this.setupMarker();
     this.time = _option.time;
 
     // this.setupSphere();
