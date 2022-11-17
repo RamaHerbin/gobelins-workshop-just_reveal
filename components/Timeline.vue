@@ -14,7 +14,7 @@
         </button>
       </div>
       <div class='timeline__inside' ref='insideRef'>
-        <div class='date noselect' ref='dateRef'>
+        <div ref='dateRef' class='date noselect'>
           <div
             v-for='dayIndex in NB_DAYS'
             class='date__day'
@@ -65,7 +65,7 @@ const ticksRef = ref([]);
 let ticksEvents = [];
 const refinedEvents = ref([]);
 let dragObject = null;
-let isMoving = false;
+const isMoving = ref(false);
 let currentSelectedEvent = null;
 
 onMounted(() => {
@@ -116,7 +116,7 @@ const setTicksOpacity = () => {
 
       const isEventDay = refinedEvents.value.includes(i + 1);
 
-      if (isEventDay) {
+      // if (isEventDay) {
         const isMiddleTick = i === baseIndex + Math.floor(ticksInView/2) + 1;
 
         if (isMiddleTick) {
@@ -124,7 +124,7 @@ const setTicksOpacity = () => {
         } else {
           tickRef.classList.remove('date__day--is-middle');
         }
-      }
+      // }
     }
   }
 }
@@ -190,8 +190,8 @@ const goToEvent = (positionToGo) => {
   duration = duration < 0.7 ? 0.7 : duration;
   duration = duration > 1.1 ? 1.1 : duration;
 
-  if (positionToGo < 0 && positionToGo > -dateRef.value.offsetWidth + insideRef.value.offsetWidth && !isMoving && positionToGo !== dragObject[0].x) {
-    isMoving = true;
+  if (positionToGo < 0 && positionToGo > -dateRef.value.offsetWidth + insideRef.value.offsetWidth && !isMoving.value && positionToGo !== dragObject[0].x) {
+    isMoving.value = true;
     dragObject[0].disable();
     gsap.fromTo(dragObject[0].target, {x: dragObject[0].x}, {
       x: positionToGo,
@@ -207,7 +207,7 @@ const goToEvent = (positionToGo) => {
       onComplete: function() {
         dragObject[0].update();
         dragObject[0].enable();
-        isMoving = false;
+        isMoving.value = false;
       }
     });
   }
@@ -276,16 +276,16 @@ const goToEvent = (positionToGo) => {
     width: calc(100% - 80px);
   }
 
-  &__mid-tick {
-    position: absolute;
-    z-index: 2;
-    left: 50%;
-    bottom: 0;
-    transform: translateX(-50%);
-    width: 3px;
-    height: 40px;
-    background-color: #D9D9D9;
-  }
+  // &__mid-tick {
+  //   position: absolute;
+  //   z-index: 2;
+  //   left: 50%;
+  //   bottom: 0;
+  //   transform: translateX(-50%);
+  //   width: 3px;
+  //   height: 40px;
+  //   background-color: #D9D9D9;
+  // }
 }
 
 .date {
@@ -295,7 +295,7 @@ const goToEvent = (positionToGo) => {
   display: flex;
   align-items: center;
   height: 40px;
-  padding-top: 28px;
+  padding-top: 40px;
 
   &__day {
     position: relative;
@@ -326,6 +326,7 @@ const goToEvent = (positionToGo) => {
       width: 3px;
       height: 16px;
       background-color: #D9D9D9;
+      transition: height .1s ease-out;
     }
 
     &--is-event {
@@ -356,6 +357,12 @@ const goToEvent = (positionToGo) => {
     &--is-week & {
       &__tick {
         height: 24px;
+      }
+    }
+
+    &--is-middle & {
+      &__tick {
+        height: 40px;
       }
     }
   }
