@@ -3,6 +3,9 @@ import * as THREE from "three";
 import countries from "/assets/globe-data-min.json";
 import travelHistory from "/assets/my-flights.json"
 import airportHistory from "/assets/my-airports.json"
+
+// import fragmentShader from '/shaders/ocean.frag'
+// import vertexShader from '/shaders/ocean.vert'
    
 export default class Globe {
   /*
@@ -28,7 +31,7 @@ export default class Globe {
       waitForGlobeReady: true,
       animateIn: true,
     })
-        .hexPolygonsData(countries.features)
+        // .hexPolygonsData(countries.features)
       //   .hexPolygonResolution(3)
         .hexPolygonMargin(0.7)
       .showAtmosphere(true)
@@ -61,7 +64,7 @@ export default class Globe {
     let loader = new THREE.TextureLoader()
 
     const displacement = await loader.load(
-      "/img/bump_maps_custom_v2.webp"
+      '/img/elevation_map_5_60-100.png'
     );
 
     // const texture = await loader.load("/img/map_earth_color.jpg");
@@ -69,18 +72,16 @@ export default class Globe {
     // globeMaterial.normalMap = normalMap;
 
     globeMaterial.displacementMap = displacement;
-    globeMaterial.displacementScale = 10;
-    globeMaterial.displacementBias = 1;
+    globeMaterial.displacementScale = 5;
+    globeMaterial.displacementBias = 0.;
 
 
     // const loaderBump = new THREE.TextureLoader();
     // const bump = await loaderBump.load('/img/earth-topology.png');
     
-    globe.bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png');
-
 
     // globeMaterial.bumpMap = bump;
-    globeMaterial.bumpScale = 0.5;
+    globeMaterial.bumpScale = 1;
 
 
     globe.receiveShadow = true;
@@ -89,6 +90,8 @@ export default class Globe {
     // globe.scale.set(0.1, 0.1, 0.1)
 
     globe.rotation.set(-1, 4, -1)
+
+    globe.bumpImageUrl('/img/elevation_map_5_60-100.png');
 
 
 
@@ -142,7 +145,7 @@ export default class Globe {
 
 
   setupSea() {
-    const geometry = new THREE.SphereGeometry(3.04, 256, 256);
+    const geometry = new THREE.SphereGeometry(3.02, 256, 256);
     const material = new THREE.MeshStandardMaterial({
       color: 0xebebeb,
       metalness: 0,
@@ -176,8 +179,8 @@ export default class Globe {
       // uniforms,
       vertexShader,
       fragmentShader,
-      side: THREE.FrontSide,
-      blending: THREE.NormalBlending,
+      // side: THREE.FrontSide,
+      // blending: THREE.NormalBlending,
       // transparent: true
     });
 

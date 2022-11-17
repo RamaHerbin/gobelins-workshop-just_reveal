@@ -16,12 +16,20 @@ export default class Sky {
         const skyboxGeo = new THREE.BoxGeometry(size, size, size)
 
         let skyboxArray = []
-        const front = new THREE.TextureLoader().load("img/skybox/skybox_4.jpg");
-        const back = new THREE.TextureLoader().load("img/skybox/skybox_1.jpg");
-        const up = new THREE.TextureLoader().load("img/skybox/skybox_2.jpg");
-        const down = new THREE.TextureLoader().load("img/skybox/skybox_6.jpg");
-        const right = new THREE.TextureLoader().load("img/skybox/skybox_5.jpg");
-        const left = new THREE.TextureLoader().load("img/skybox/skybox_3.jpg");
+        // const front = new THREE.TextureLoader().load("img/skybox/skybox_4.jpg");
+        // const back = new THREE.TextureLoader().load("img/skybox/skybox_1.jpg");
+        // const up = new THREE.TextureLoader().load("img/skybox/skybox_2.jpg");
+        // const down = new THREE.TextureLoader().load("img/skybox/skybox_6.jpg");
+        // const right = new THREE.TextureLoader().load("img/skybox/skybox_5.jpg");
+        // const left = new THREE.TextureLoader().load("img/skybox/skybox_3.jpg");
+
+        const front = new THREE.TextureLoader().load("img/skybox_v4/skybox_v4_4.jpg");
+        const back = new THREE.TextureLoader().load("img/skybox_v4/skybox_v4_1.jpg");
+        const up = new THREE.TextureLoader().load("img/skybox_v4/skybox_v4_2.jpg");
+        const down = new THREE.TextureLoader().load("img/skybox_v4/skybox_v4_6.jpg");
+        const right = new THREE.TextureLoader().load("img/skybox_v4/skybox_v4_5.jpg");
+        const left = new THREE.TextureLoader().load("img/skybox_v4/skybox_v4_3.jpg");
+
 
         skyboxArray.push(new THREE.MeshBasicMaterial({map: front}));
         skyboxArray.push(new THREE.MeshBasicMaterial({map: back}))

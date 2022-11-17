@@ -62,6 +62,7 @@ export default class World {
     this.lightAxisHelp()
 
     this.setupSkybox();
+
   }
 
   setStartingScreen() {
@@ -79,6 +80,8 @@ export default class World {
       // time: this.time,
       sizes: this.sizes,
     });
+    // this.controls.autoRotate = true;
+
   }
 
   setMaterial() {
