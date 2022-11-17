@@ -1,8 +1,10 @@
 import * as THREE from "three";
+import { gsap } from "gsap";
 
-import countries from "/assets/globe-data-min.json";
+// import countries from "/assets/globe-data-min.json";
 import travelHistory from "/assets/my-flights.json"
 import airportHistory from "/assets/my-airports.json"
+import countries from "/assets/countries.json"
    
 export default class Globe {
   /*
@@ -13,52 +15,45 @@ export default class Globe {
     this.container = new THREE.Object3D();
     this.container.matrixAutoUpdate = false;
     this.scene = _option.scene;
+    this.camera = _option.camera;
+
+    this.globe = null;
 
     this.init();
     this.setupSea();
+
+    this.updateCountry = this.updateCountry.bind(this);
     // this.water();
   }
 
   async init() {
     const ThreeGlobe = await (await import('three-globe')).default
 
-    console.log('countries :>> ', countries);
-
-    let globe = new ThreeGlobe({
+    // console.log('countries :>> ', countries);
+      this.globe = new ThreeGlobe({
       waitForGlobeReady: true,
       animateIn: true,
     })
-        .hexPolygonsData(countries.features)
-      //   .hexPolygonResolution(3)
-        .hexPolygonMargin(0.7)
+      .bumpImageUrl('/img/earth-topology.png')
+      .polygonsData(countries.features.filter(d => d.properties.ISO_A2 !== 'AQ'))
+      .polygonCapColor(() => 'rgba(200, 0, 0, 0.7)')
+      .polygonSideColor(() => 'rgba(0, 200, 0, 0.1)')
+      .polygonAltitude(.03)
+      .polygonStrokeColor(() => '#111')
       .showAtmosphere(true)
       .atmosphereColor("#3a228a")
       .atmosphereAltitude(0.5)
       .hexPolygonColor('#ffffff')
 
-      // .hexPolygonColor((e) => {
-      //   if (
-      //     ["KGZ", "KOR", "THA", "RUS", "UZB", "IDN", "KAZ", "MYS"].includes(
-      //       e.properties.ISO_A3
-      //     )
-      //   ) {
-      //     return "rgba(255,255,255, 1)";
-      //   } else return "rgba(255,255,255, 0.7)";
-      // });
-      // const material = new THREE.MeshStandardMaterial({
-      //   color: 0xffffff,
-      //   metalness: 0.5,
-      //   roughness: 0.5,
-      // });
+      let loader = new THREE.TextureLoader()
 
-    const globeMaterial = globe.globeMaterial();
-    console.log('globeMaterial :>> ', globeMaterial);
+    const globeMaterial = this.globe.globeMaterial();
+
     globeMaterial.color = new THREE.Color(0xffffff);
     globeMaterial.emissive = new THREE.Color(0x040B4A);
     globeMaterial.emissiveIntensity = 0.8;
     globeMaterial.shininess = 0.7;
 
-    let loader = new THREE.TextureLoader()
 
     const displacement = await loader.load(
       "/img/bump_maps_custom_v2.webp"
@@ -70,18 +65,18 @@ export default class Globe {
     // globeMaterial.normalMap = normalMap;
 
     globeMaterial.displacementMap = displacement;
-    globeMaterial.displacementScale = 8;
+    globeMaterial.displacementScale = 4;
     globeMaterial.displacementBias = 1;
 
-    globe.receiveShadow = true;
-    globe.castShadow = true;
-    globe.scale.set(0.2, 0.2, 0.2)
-    globe.rotation.set(-1, 4, -1)
+    this.globe.receiveShadow = true;
+    this.globe.castShadow = true;
+    this.globe.scale.set(0.2, 0.2, 0.2)
+    this.globe.rotation.set(-1, 4, -1)
 
 
 
     setTimeout(() => {
-      globe.arcsData(travelHistory.flights)
+      this.globe.arcsData(travelHistory.flights)
         .arcColor((e) => {
           return e.status ? "#9cff00" : "#FF4000";
         })
@@ -113,22 +108,29 @@ export default class Globe {
         .pointRadius(0.05);
     }, 1000);
 
-    this.container.add(globe);
-    console.log('globe :>> ', globe);
+    this.container.add(this.globe);
+    // console.log('globe :>> ', globe);
 
     // NOTE Cool stuff
     // globeMaterial.wireframe = true;
 
   }
 
+  updateCountry(index) {
+      console.log('this.globe :>> ', this.globe);
 
+      // Countries 3D object are added in the 4th child of layer group
+      this.globe.polygonsData([countries.features[index]]);
+      console.log('countries.features[index] :>> ', );
+
+      let testCoord = this.globe.getCoords(countries.features[index].geometry.coordinates[0][0][0], countries.features[index].geometry.coordinates[0][0][1]);
+      console.log('testCoord :>> ', testCoord);
+
+      gsap.to(this.camera.instance.rotation, {x: testCoord.x, y: testCoord.y})
+  }
 
 
   // ADD WATER
-
-
-
-
   setupSea() {
     const geometry = new THREE.SphereGeometry(20.3, 256, 256);
     const material = new THREE.MeshStandardMaterial({

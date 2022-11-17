@@ -1,38 +1,29 @@
 import * as THREE from "three";
 
 import Globe from "./Globe";
+import Sky from "./Sky";
+import Marker from "./Marker";
+
+
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Water } from "three/addons/objects/Water.js";
-
 
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
 import { SAOPass } from "three/addons/postprocessing/SAOPass.js";
-import Sky from "./Sky";
 
 // import { PlaneMaterial } from "../Materials/AtmosphereMaterial.js";
 
 // import fragmentShader from '/public/shaders/basic.frag';
 // import vertexShader from '/public/shaders/basic.vert';
 
-// import Materials from './Materials';
-// import Controls from './Controls';
-// import Torus from "./Torus";
-// import Plane from "./Plane";
-// import Fox from "./Fox";
-// import Transition from "./Transition";
+
 
 export default class World {
   constructor(_option) {
-    // this.time = _option.time;
-    // this.sizes = _option.sizes;
-    // this.debug = _option.debug;
-    // this.light = _option.light;
-    // this.camera = _option.camera;
-    // this.renderer = _option.renderer;
-    // this.resources = _option.resources;
+
     this.scene = _option.scene;
     this.renderer = _option.renderer;
     this.camera = _option.camera;
@@ -52,6 +43,7 @@ export default class World {
 
     this.setupGlobe();
     this.setupSky();
+    this.setupMarker();
     this.time = _option.time;
 
     // this.setupSphere();
@@ -138,7 +130,11 @@ export default class World {
     this.scene.instance.add(sphere);
   }
 
+  setupMarker() {
+    this.marker = new Marker();
 
+    this.scene.instance.add(this.marker.container);
+  }
 
   setupLights() {
     // const ambientLight = new THREE.AmbientLight( 0xcccccc, 0.5 );

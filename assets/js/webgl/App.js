@@ -41,15 +41,8 @@ export default class Application {
       );
     });
 
-    this.lineMesh = null; //Access lineMesh globally
     this.composer = null;
     this.gui = null;
-    this.audio = null; //Audio module load dynamically
-    this.percentAnim = [0, 0, 0, 0, 0, 0];
-    this.time = 0;
-
-    this.colors = []; // set in setupMesh
-    this.strings = []; //Array of wavee strings
 
     this.setupGUI();
 
@@ -57,6 +50,7 @@ export default class Application {
 
     this.postProcessing = new PostProcessing({scene: this.scene, renderer : this.renderer, camera: this.camera});
 
+    this.world = null;
     this.setupWorld();
 
     this.onFrame();
@@ -97,8 +91,8 @@ export default class Application {
 
   setupWorld() {
     //TODO: INIT WORLD
-    let world = new World({scene: this.scene, time: this.time, renderer : this.renderer, camera: this.camera});
-    this.scene.instance.add(world.container);
+    this.world = new World({scene: this.scene, time: this.time, renderer : this.renderer, camera: this.camera});
+    this.scene.instance.add(this.world.container);
 
   }
 
