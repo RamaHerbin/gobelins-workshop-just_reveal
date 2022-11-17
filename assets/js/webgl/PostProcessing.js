@@ -30,7 +30,10 @@ export default class PostProcessing {
     );
     saoPass.params.saoIntensity = 1;
 
+    // comment ligne en dessous pour desac oclusion ambiant
     // this.composer.addPass(saoPass);
+
+
       this.saoPass = saoPass;
       
     // Init gui

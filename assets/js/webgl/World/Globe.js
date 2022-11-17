@@ -6,6 +6,13 @@ import travelHistory from "/assets/my-flights.json";
 import airportHistory from "/assets/my-airports.json";
 import countries from "/assets/countries.json";
 
+import countries from "/assets/globe-data-min.json";
+import travelHistory from "/assets/my-flights.json"
+import airportHistory from "/assets/my-airports.json"
+
+// import fragmentShader from '/shaders/ocean.frag'
+// import vertexShader from '/shaders/ocean.vert'
+   
 export default class Globe {
   /*
    * @constructor
@@ -20,10 +27,9 @@ export default class Globe {
     this.dataOnScene = [];
 
     this.init();
-    // this.setupSea();
+    this.setupSea();
 
     this.updateCountry = this.updateCountry.bind(this);
-    // this.water();
   }
 
   async init() {
@@ -55,18 +61,20 @@ export default class Globe {
 
     globeMaterial.color = new THREE.Color(0xffffff);
     globeMaterial.emissive = new THREE.Color(0x040b4a);
-    globeMaterial.emissiveIntensity = 0.8;
-    globeMaterial.shininess = 0.7;
+    globeMaterial.emissiveIntensity = 0.2;
+    globeMaterial.shininess = 0.5;
 
     const displacement = await loader.load("/img/bump_maps_custom_v2.webp");
     // const texture = await loader.load("/img/map_earth_color.jpg");
+
 
     // globeMaterial.map = texture;
     // globeMaterial.normalMap = normalMap;
 
     globeMaterial.displacementMap = displacement;
-    globeMaterial.displacementScale = 4;
-    globeMaterial.displacementBias = 1;
+
+    globeMaterial.displacementScale = 6;
+    globeMaterial.displacementBias = 0;
 
     this.globe.receiveShadow = true;
     this.globe.castShadow = true;
@@ -108,6 +116,7 @@ export default class Globe {
     // }, 1000);
 
     this.container.add(this.globe);
+
     // console.log('globe :>> ', globe);
 
     // NOTE Cool stuff
@@ -203,9 +212,9 @@ export default class Globe {
 
   // ADD WATER
   setupSea() {
-    const geometry = new THREE.SphereGeometry(20.3, 256, 256);
+    const geometry = new THREE.SphereGeometry(3.02, 256, 256);
     const material = new THREE.MeshStandardMaterial({
-      color: 0x808080,
+      color: 0xebebeb,
       metalness: 0,
       roughness: 1,
     });
@@ -237,8 +246,8 @@ export default class Globe {
       // uniforms,
       vertexShader,
       fragmentShader,
-      side: THREE.FrontSide,
-      blending: THREE.NormalBlending,
+      // side: THREE.FrontSide,
+      // blending: THREE.NormalBlending,
       // transparent: true
     });
 
@@ -255,31 +264,4 @@ export default class Globe {
     this.scene.instance.add(sea);
   }
 
-  water() {
-    const waterGeometry = new THREE.SphereGeometry(3, 512, 512);
-    // const waterGeometry = new THREE.PlaneGeometry(1000, 1000 );
-
-    const water = new Water(waterGeometry, {
-      textureWidth: 512,
-      textureHeight: 512,
-      waterNormals: new THREE.TextureLoader().load(
-        "/textures/waternormals.jpg",
-        function (texture) {
-          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-        }
-      ),
-      // sunDirection: new THREE.Vector3(),
-      // sunColor: 0xffffff,
-      waterColor: 0x3f4dc4,
-      distortionScale: 5,
-      fog: this.scene.instance.fog !== undefined,
-      side: THREE.DoubleSide,
-    });
-
-    water.rotation.x = 0.5;
-    water.rotation.y = 3;
-    water.rotation.z = 0;
-
-    this.scene.instance.add(water);
-  }
 }
