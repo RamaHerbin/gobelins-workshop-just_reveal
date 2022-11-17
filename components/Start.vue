@@ -31,13 +31,14 @@ onMounted(() => {
     type:"y",
     inertia: true,
     bounds: {minX: 0},
-    dragResistance: 0.2,
+    edgeResistance: 1,
+    dragResistance: 0.6,
     zIndexBoost: false,
     snap: {
       y: [0]
     },
     onDragEnd: function() {
-      if (InertiaPlugin.getVelocity(this.target, "y") < -800) {
+      if (InertiaPlugin.getVelocity(this.target, "y") < -600) {
         this.disable();
         gsap.to(this.target, {
           y: -window.innerHeight * 2,
