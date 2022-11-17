@@ -2,9 +2,9 @@ import * as THREE from "three";
 import { gsap } from "gsap";
 
 // import countries from "/assets/globe-data-min.json";
-import travelHistory from "/assets/my-flights.json";
-import airportHistory from "/assets/my-airports.json";
-import countries from "/assets/countries.json";
+// import travelHistory from "/assets/my-flights.json";
+// import airportHistory from "/assets/my-airports.json";
+// import countries from "/assets/countries.json";
 
 import countries from "/assets/globe-data-min.json";
 import travelHistory from "/assets/my-flights.json"

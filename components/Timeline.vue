@@ -204,7 +204,6 @@ const goToEvent = (positionToGo) => {
 
   if (positionToGo < 0 && positionToGo > -dateRef.value.offsetWidth + insideRef.value.offsetWidth && !isMoving.value && positionToGo !== dragObject[0].x) {
     isMoving.value = true;
-    dragObject[0].disable();
     gsap.fromTo(dragObject[0].target, {x: dragObject[0].x}, {
       x: positionToGo,
       duration: duration,
@@ -218,7 +217,10 @@ const goToEvent = (positionToGo) => {
       },
       onComplete: function() {
         dragObject[0].update();
-        dragObject[0].enable();
+        isMoving.value = false;
+      },
+      onInterrupt: function() {
+        dragObject[0].update();
         isMoving.value = false;
       }
     });
