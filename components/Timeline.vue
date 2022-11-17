@@ -159,7 +159,7 @@ const setPlanetRotationDebounce = useDebounceFn(() => {
 }, 300);
 
 const getClosest = (target, selection, direction) => {
-  selection = direction === 'left' ? selection.filter(n => n < target + 15) : selection.filter(n => n > target + 20);
+  selection = direction === 'left' ? selection.filter(n => n < target) : selection.filter(n => n > target + 12);
   selection = selection.length === 0 ? [-1000] : selection
 
   return selection.reduce((prev, curr) => (Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev));
@@ -342,6 +342,10 @@ const goToEvent = (positionToGo) => {
 
         .date__day__event {
           transform: translateX(-50%) scale(1.5);
+        }
+
+        .date__day__tick {
+          height: 40px;
         }
       }
     }
