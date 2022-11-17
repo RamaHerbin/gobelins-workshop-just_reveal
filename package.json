@@ -14,6 +14,7 @@
     "vite-plugin-string": "^1.1.2"
   },
   "dependencies": {
+    "@vueuse/core": "^9.5.0",
     "dat.gui": "^0.7.9",
     "gsap": "file:gsap-bonus.tgz",
     "normalize.css": "^8.0.1",
