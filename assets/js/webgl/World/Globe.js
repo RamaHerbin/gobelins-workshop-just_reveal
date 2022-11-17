@@ -10,8 +10,8 @@ import countries from "/assets/globe-data-min.json";
 import travelHistory from "/assets/my-flights.json"
 import airportHistory from "/assets/my-airports.json"
 
-import fragmentShader from 'assets/shaders/oceanFrag.glsl'
-import vertexShader from 'assets/shaders/oceanVert.glsl'
+import oceanFrag from 'assets/shaders/oceanFrag.glsl'
+import oceanVert from 'assets/shaders/oceanVert.glsl'
    
 export default class Globe {
   /*
@@ -45,14 +45,14 @@ export default class Globe {
       waitForGlobeReady: true,
       animateIn: true,
     })
-      .bumpImageUrl("/img/earth-topology.png")
-      // .bumpImageUrl("/img/elevation_map_13_40-100.png")
+      // .bumpImageUrl("/img/earth-topology.png")
+      .bumpImageUrl("/img/elevation_map_13_40-100.png")
 
       .polygonAltitude(0.03)
       .polygonStrokeColor(() => "#111")
       .showAtmosphere(true)
       .atmosphereColor("#308D98")
-      .atmosphereAltitude(0.7)
+      .atmosphereAltitude(0.5)
       .hexPolygonColor("#ffffff");
 
     // (function moveSpheres() {
@@ -72,7 +72,7 @@ export default class Globe {
 
 
     const displacement = await loader.load("/img/elevation_map_13_40-100.png");
-    // const texture = await loader.load("/img/map_earth_color.jpg");
+    const texture = await loader.load("/img/earth-topology.png");
 
 
     // globeMaterial.map = texture;
@@ -80,14 +80,19 @@ export default class Globe {
 
     globeMaterial.displacementMap = displacement;
 
-    globeMaterial.displacementScale = 8;
-    globeMaterial.displacementBias = 0;
+    globeMaterial.displacementScale = 7;
+    globeMaterial.displacementBias = 0.3;
+    globeMaterial.lights = true;
+
 
 
     this.globe.receiveShadow = true;
     this.globe.castShadow = true;
     this.globe.scale.set(0.2, 0.2, 0.2);
     this.globe.rotation.set(-1, 4, -1);
+    // this.globe.position.x = 30;
+
+
 
     // setTimeout(() => {
     //   this.globe
@@ -243,8 +248,8 @@ export default class Globe {
         uScale : {value:5},
         depthNoise : {value:10},
       },
-    vertexShader: vertexShader, 
-    fragmentShader : fragmentShader,
+    vertexShader: oceanVert, 
+    fragmentShader : oceanFrag,
     transparent : true,
     depthWrite : true,
     })
@@ -261,6 +266,8 @@ export default class Globe {
 
     waves.receiveShadow = true;
     waves.castShadow = true;
+    // waves.position.x = 30;
+
 
     this.scene.instance.add(waves);
     // this.scene.instance.add(sea);

@@ -41,11 +41,8 @@ export default class World {
 
     this.setupGlobe();
 
-    // this.setupSky();
-
     this.time = _option.time;
 
-    // this.setupSphere();
     this.setupLights();
     // this.setupClouds();
     this.setupBg();
@@ -157,28 +154,28 @@ export default class World {
     // const ambientLight = new THREE.AmbientLight( 0xcccccc, 0.5 );
     // this.scene.instance.add( ambientLight );
 
-    const firstLight = new THREE.DirectionalLight(0x00043D, 0.3);
+    const firstLight = new THREE.DirectionalLight(0x00043D, 0.4);
     this.scene.instance.add(firstLight);
     firstLight.position.x = -4;
-    firstLight.position.y = 8;
+    firstLight.position.y = 16;
     firstLight.position.z = -10;
     firstLight.castShadow = true;
     const firstPointLightHelper = new THREE.PointLightHelper( firstLight, 1 );
     this.scene.instance.add( firstPointLightHelper );
 
-    const secondLight = new THREE.DirectionalLight(0x308D98, 0.3);
+    const secondLight = new THREE.DirectionalLight(0x308D98, 0.4);
     this.scene.instance.add(secondLight);
     secondLight.position.x = -6;
-    secondLight.position.y = 6;
-    secondLight.position.z = 10;
+    secondLight.position.y = 12;
+    secondLight.position.z = 15;
     secondLight.castShadow = true;
     const secondPointLightHelper = new THREE.PointLightHelper( secondLight, 1 );
     this.scene.instance.add( secondPointLightHelper );
 
-    const frontLight = new THREE.DirectionalLight(0xFFEE4D, 0.4);
+    const frontLight = new THREE.DirectionalLight(0xFFEE4D, 0.5);
     this.scene.instance.add(frontLight);
-    frontLight.position.x = -10;
-    frontLight.position.y = 10;
+    frontLight.position.x = -5;
+    frontLight.position.y = 18;
     frontLight.position.z = 0;
     frontLight.castShadow = true;
     const frontLightHelper = new THREE.PointLightHelper( frontLight, 1 );
