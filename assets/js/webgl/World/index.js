@@ -114,13 +114,15 @@ export default class World {
     const displacement = new THREE.TextureLoader().load(
       "/img/bump_maps_custom_v2.webp"
     );
+
+    
     // const texture = new THREE.TextureLoader().load('/img/map_earth_color.jpg');
-    const texture = new THREE.TextureLoader().load("/img/cot.webp");
+    // const texture = new THREE.TextureLoader().load("/img/cot.webp");
     // const emissive = new THREE.TextureLoader().load('/img/map_earth_color.jpg');
 
     const sphere = new THREE.Mesh(geometry, material);
 
-    material.map = texture;
+    // material.map = texture;
 
     material.displacementMap = displacement;
     material.displacementScale = 0.2;

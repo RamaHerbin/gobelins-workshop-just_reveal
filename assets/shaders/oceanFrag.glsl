@@ -88,7 +88,7 @@ precision highp float;
     }
 
     vec3 getPerlinTurbulence( vec2 position, float scale, float strength, float time ) {
-    vec3 perlin = pnoiseVec3( vec3( position.xy, time ) * scale );
+    vec3 perlin = pnoiseVec3( vec3( position.xy, time ) * scale * 10. );
     perlin *= strength;
     return perlin;
     }
@@ -112,10 +112,12 @@ void main() {
 
 
    // noise noir et blanc sur le blob
+   // float noiseColor = pnoise(vec3(vPos.xy, uTime));
    float noiseColor = pnoise(vec3(vPos.xy, uTime));
 
-   vec3 colorA = vec3(1., 0., 0.);
-   vec3 colorB = vec3(0., 1., 0.7);
+
+   vec3 colorA = vec3(0.65, 0.65, 0.65);
+   vec3 colorB = vec3(0.6,0.6,0.6);
    vec3 colorMix = mix(colorA, colorB, noiseColor);
 
 
@@ -124,11 +126,11 @@ void main() {
    // vec3 result = getPerlinTurbulence(vec2(vUv), uScale, uStrength,uTime*0.05);
 
    // utiliser vPos.xy au lieu de vUv ça permet de ne pas avoir la ligne de séparation au moment ou la tecture se rejoint
-   vec3 result = getPerlinTurbulence(vec2(vPos.xy), uScale, uStrength,uTime*0.05);
+   vec3 result = getPerlinTurbulence(vec2(vPos.xy), uScale, uStrength,uTime);
 
    vec4 color = vec4(vec3(result), 0.7);
 
-   gl_FragColor = vec4(color);
+   gl_FragColor = vec4(colorMix,1);
 }
 
 

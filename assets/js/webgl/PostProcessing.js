@@ -36,31 +36,31 @@ export default class PostProcessing {
 
       this.saoPass = saoPass;
       
-    // Init gui
-    const gui = new GUI();
-    gui
-      .add(saoPass.params, "output", {
-        Beauty: SAOPass.OUTPUT.Beauty,
-        "Beauty+SAO": SAOPass.OUTPUT.Default,
-        SAO: SAOPass.OUTPUT.SAO,
-        Depth: SAOPass.OUTPUT.Depth,
-        Normal: SAOPass.OUTPUT.Normal,
-      })
-      .onChange(function (value) {
-        saoPass.params.output = parseInt(value);
-      });
+    // // Init gui
+    // const gui = new GUI();
+    // gui
+    //   .add(saoPass.params, "output", {
+    //     Beauty: SAOPass.OUTPUT.Beauty,
+    //     "Beauty+SAO": SAOPass.OUTPUT.Default,
+    //     SAO: SAOPass.OUTPUT.SAO,
+    //     Depth: SAOPass.OUTPUT.Depth,
+    //     Normal: SAOPass.OUTPUT.Normal,
+    //   })
+    //   .onChange(function (value) {
+    //     saoPass.params.output = parseInt(value);
+    //   });
 
-      // console.log('SAOPass.OUTPUT.Depth :>> ', SAOPass.OUTPUT.Depth);
+    //   // console.log('SAOPass.OUTPUT.Depth :>> ', SAOPass.OUTPUT.Depth);
 
-    gui.add(saoPass.params, "saoBias", -1, 1);
-    gui.add(saoPass.params, "saoIntensity", 0, 1);
-    gui.add(saoPass.params, "saoScale", 0, 10);
-    gui.add(saoPass.params, "saoKernelRadius", 1, 100);
-    gui.add(saoPass.params, "saoMinResolution", 0, 1);
-    gui.add(saoPass.params, "saoBlur");
-    gui.add(saoPass.params, "saoBlurRadius", 0, 200);
-    gui.add(saoPass.params, "saoBlurStdDev", 0.5, 150);
-    gui.add(saoPass.params, "saoBlurDepthCutoff", 0.0, 0.1);
+    // gui.add(saoPass.params, "saoBias", -1, 1);
+    // gui.add(saoPass.params, "saoIntensity", 0, 1);
+    // gui.add(saoPass.params, "saoScale", 0, 10);
+    // gui.add(saoPass.params, "saoKernelRadius", 1, 100);
+    // gui.add(saoPass.params, "saoMinResolution", 0, 1);
+    // gui.add(saoPass.params, "saoBlur");
+    // gui.add(saoPass.params, "saoBlurRadius", 0, 200);
+    // gui.add(saoPass.params, "saoBlurStdDev", 0.5, 150);
+    // gui.add(saoPass.params, "saoBlurDepthCutoff", 0.0, 0.1);
   }
 
   update() {

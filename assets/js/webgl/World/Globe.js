@@ -2,16 +2,16 @@ import * as THREE from "three";
 import { gsap } from "gsap";
 
 // import countries from "/assets/globe-data-min.json";
-import travelHistory from "/assets/my-flights.json";
-import airportHistory from "/assets/my-airports.json";
-import countries from "/assets/countries.json";
+// import travelHistory from "/assets/my-flights.json";
+// import airportHistory from "/assets/my-airports.json";
+// import countries from "/assets/countries.json";
 
 import countries from "/assets/globe-data-min.json";
 import travelHistory from "/assets/my-flights.json"
 import airportHistory from "/assets/my-airports.json"
 
-// import fragmentShader from '/shaders/ocean.frag'
-// import vertexShader from '/shaders/ocean.vert'
+import fragmentShader from 'assets/shaders/oceanFrag.glsl'
+import vertexShader from 'assets/shaders/oceanVert.glsl'
    
 export default class Globe {
   /*
@@ -22,6 +22,8 @@ export default class Globe {
     this.container.matrixAutoUpdate = false;
     this.scene = _option.scene;
     this.camera = _option.camera;
+    this.time = _option.time;
+
 
     this.globe = null;
     this.dataOnScene = [];
@@ -30,6 +32,8 @@ export default class Globe {
     this.setupSea();
 
     this.updateCountry = this.updateCountry.bind(this);
+    this.update = this.update.bind(this);
+
   }
 
   async init() {
@@ -42,11 +46,13 @@ export default class Globe {
       animateIn: true,
     })
       .bumpImageUrl("/img/earth-topology.png")
+      // .bumpImageUrl("/img/elevation_map_13_40-100.png")
+
       .polygonAltitude(0.03)
       .polygonStrokeColor(() => "#111")
       .showAtmosphere(true)
-      .atmosphereColor("#3a228a")
-      .atmosphereAltitude(0.5)
+      .atmosphereColor("#308D98")
+      .atmosphereAltitude(0.7)
       .hexPolygonColor("#ffffff");
 
     // (function moveSpheres() {
@@ -60,11 +66,12 @@ export default class Globe {
     const globeMaterial = this.globe.globeMaterial();
 
     globeMaterial.color = new THREE.Color(0xffffff);
-    globeMaterial.emissive = new THREE.Color(0x040b4a);
-    globeMaterial.emissiveIntensity = 0.2;
-    globeMaterial.shininess = 0.5;
+    globeMaterial.emissive = new THREE.Color(0xffffff);
+    globeMaterial.emissiveIntensity = 0.3;
+    globeMaterial.shininess = 1;
 
-    const displacement = await loader.load("/img/bump_maps_custom_v2.webp");
+
+    const displacement = await loader.load("/img/elevation_map_13_40-100.png");
     // const texture = await loader.load("/img/map_earth_color.jpg");
 
 
@@ -73,8 +80,9 @@ export default class Globe {
 
     globeMaterial.displacementMap = displacement;
 
-    globeMaterial.displacementScale = 6;
+    globeMaterial.displacementScale = 8;
     globeMaterial.displacementBias = 0;
+
 
     this.globe.receiveShadow = true;
     this.globe.castShadow = true;
@@ -114,6 +122,7 @@ export default class Globe {
     //     .pointAltitude(0.07)
     //     .pointRadius(0.05);
     // }, 1000);
+    
 
     this.container.add(this.globe);
 
@@ -124,7 +133,7 @@ export default class Globe {
   }
 
   updateCountry(index) {
-    console.log("this.globe :>> ", this.globe);
+    // console.log("this.globe :>> ", this.globe);
 
     const gData = [
       {
@@ -212,47 +221,40 @@ export default class Globe {
 
   // ADD WATER
   setupSea() {
-    const geometry = new THREE.SphereGeometry(3.02, 256, 256);
+    const geometrySea = new THREE.SphereGeometry(20.3, 256, 256);
+    const geometryWaves = new THREE.SphereGeometry(14.3, 512, 512);
+
+
     const material = new THREE.MeshStandardMaterial({
       color: 0xebebeb,
       metalness: 0,
       roughness: 1,
     });
 
-    const vertexShader = `
-    varying vec3 vNormal;
-    
-    void main()
-    {
-      vNormal = normalize( normalMatrix * normal );
-      gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-    }`;
-
-    const fragmentShader = `
-    varying vec3 vNormal;
-
-    void main()
-    {
-      float intensity = pow( 0.8 - dot( vNormal, vec3( 0, 0, 1.0 ) ), 12.0 );
-      gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * intensity;
-    }`;
-
     const uniforms = {
       // topColor: { value: new THREE.Color(SKY_COLOR) },
       // bottomColor: { value: new THREE.Color(GROUND_COLOR) }
     };
 
-    const atmosMat = new THREE.ShaderMaterial({
-      // uniforms,
-      vertexShader,
-      fragmentShader,
-      // side: THREE.FrontSide,
-      // blending: THREE.NormalBlending,
-      // transparent: true
-    });
+    this.waveMat = new THREE.RawShaderMaterial ({
+      uniforms :{
+        uTime : {value:this.time},
+        uStrength : {value:10},
+        uScale : {value:5},
+        depthNoise : {value:10},
+      },
+    vertexShader: vertexShader, 
+    fragmentShader : fragmentShader,
+    transparent : true,
+    depthWrite : true,
+    })
 
-    const waves = new THREE.Mesh(geometry, atmosMat);
-    const sea = new THREE.Mesh(geometry, material);
+    // this.waveMat.lights = true;
+
+    console.log(this.time);
+
+    const waves = new THREE.Mesh(geometryWaves, this.waveMat);
+    const sea = new THREE.Mesh(geometrySea, material);
 
     sea.receiveShadow = true;
     sea.castShadow = true;
@@ -260,8 +262,16 @@ export default class Globe {
     waves.receiveShadow = true;
     waves.castShadow = true;
 
-    // this.scene.instance.add(waves);
-    this.scene.instance.add(sea);
+    this.scene.instance.add(waves);
+    // this.scene.instance.add(sea);
+
   }
+
+
+    update(time) {
+      this.time = time;
+      this.waveMat.uniforms.uTime.value = this.time / 15
+      // console.log(this.time);
+    }
 
 }
