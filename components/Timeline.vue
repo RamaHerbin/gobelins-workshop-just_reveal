@@ -1,41 +1,46 @@
 <template>
   <div class='timeline'>
     <div class='timeline__wrapper'>
-      <div class='timeline__wrapper__arrows'>
-        <button @click='onArrowClick("left")' class='arrow arrow--left'>
-          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="19" fill="none">
-            <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9.697 1.605-8 8 8 8"/>
-          </svg>
-        </button>
-        <button @click='onArrowClick("right")' class='arrow arrow--right'>
-          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="19" fill="none">
-            <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1.934 17.605 8-8-8-8"/>
-          </svg>
-        </button>
+      <div class='timeline__wrapper__milestone'>
+        <span>{{currentMilestone}}</span>
       </div>
-      <div class='timeline__inside' ref='insideRef'>
-        <div ref='dateRef' class='date noselect'>
-          <div
-            v-for='dayIndex in NB_DAYS'
-            class='date__day'
-            :class='
-              refinedEvents.includes(dayIndex) && "date__day--is-event",
-              dayIndex%7 === 0 && "date__day--is-week",
-              refinedEvents.includes(dayIndex) && `date__day--c-${EVENTS[refinedEvents.indexOf(dayIndex)].type.normalize("NFD").replace(/\p{Diacritic}/gu, "")}`
-            '
-            :key='dayIndex'
-            :data-id='dayIndex'
-            @click='refinedEvents.includes(dayIndex) && onPinClick(refinedEvents.indexOf(dayIndex))'
-          >
-            <span class='date__day__tick noselect'/>
-            <div class='date__day__event noselect'>
-              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="12" fill="none">
-                <path fill="#fff" fill-rule="evenodd" d="M8.316 10.631c-1.902 1.825-4.98 1.825-6.883 0-1.758-1.687-1.92-4.379-.368-6.249L4.586.136a.375.375 0 0 1 .577 0l3.522 4.246c1.551 1.87 1.39 4.562-.369 6.25Z" clip-rule="evenodd"/>
-              </svg>
+      <div class='timeline__date-wrapper'>
+        <div class='arrows'>
+          <button @click='onArrowClick("left")' class='arrow arrow--left'>
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="19" fill="none">
+              <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9.697 1.605-8 8 8 8"/>
+            </svg>
+          </button>
+          <button @click='onArrowClick("right")' class='arrow arrow--right'>
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="19" fill="none">
+              <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1.934 17.605 8-8-8-8"/>
+            </svg>
+          </button>
+        </div>
+        <div class='timeline__inside' ref='insideRef'>
+          <div ref='dateRef' class='date noselect'>
+            <div
+              v-for='dayIndex in NB_DAYS'
+              class='date__day'
+              :class='
+                refinedEvents.includes(dayIndex) && "date__day--is-event",
+                dayIndex%7 === 0 && "date__day--is-week",
+                refinedEvents.includes(dayIndex) && `date__day--c-${EVENTS[refinedEvents.indexOf(dayIndex)].type.normalize("NFD").replace(/\p{Diacritic}/gu, "")}`
+              '
+              :key='dayIndex'
+              :data-id='dayIndex'
+              @click='refinedEvents.includes(dayIndex) && onPinClick(refinedEvents.indexOf(dayIndex))'
+            >
+              <span class='date__day__tick noselect'/>
+              <div class='date__day__event noselect'>
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="12" fill="none">
+                  <path fill="#fff" fill-rule="evenodd" d="M8.316 10.631c-1.902 1.825-4.98 1.825-6.883 0-1.758-1.687-1.92-4.379-.368-6.249L4.586.136a.375.375 0 0 1 .577 0l3.522 4.246c1.551 1.87 1.39 4.562-.369 6.25Z" clip-rule="evenodd"/>
+                </svg>
+              </div>
             </div>
           </div>
         </div>
-        <span class='timeline__mid-tick'/>
+        <!-- <span class='timeline__mid-tick'/> -->
       </div>
     </div>
   </div>
@@ -45,7 +50,8 @@
 
 import gsap, { Draggable } from 'gsap/all';
 import CustomEase from 'gsap/CustomEase';
-import { useDebounceFn } from '@vueuse/core'
+import { useDebounceFn } from '@vueuse/core';
+import { MONTHS } from '../constants/dates';
 
 const EVENTS = [
   {date: '2020/2/16', type: 'santé'},
@@ -68,11 +74,13 @@ const refinedEvents = ref([]);
 let dragObject = null;
 const isMoving = ref(false);
 let currentSelectedEvent = null;
+const currentMilestone = ref(0);
 
 onMounted(() => {
   refinedEvents.value = EVENTS.map(event => getDateDiff(event.date));
   ticksRef.value = dateRef.value.children;
   ticksEvents = [...ticksRef.value].filter((_, i) => refinedEvents.value.includes(i));
+  currentMilestone.value = buildDate(27);
 
   window.addEventListener('resize', setTicksOpacity);
   setTicksOpacity();
@@ -87,7 +95,7 @@ onMounted(() => {
     dragResistance: 0.4,
     zIndexBoost: false,
     snap: {
-      x: [...Array(NB_DAYS).fill(0).map((_, index) => -13 * index + 1)]
+      x: [...Array(NB_DAYS).fill(0).map((_, index) => -13 * index + 10)]
     },
     onThrowUpdate: function() {
       onSliderUpdate(this.x);
@@ -97,6 +105,11 @@ onMounted(() => {
     },
   });
 });
+
+const buildDate = (number) => {
+  const builtDate = new Date(2020, 0, number);
+  return `${builtDate.getDate()} ${MONTHS[builtDate.getMonth()]} ${builtDate.getFullYear()}`;
+}
 
 const setTicksOpacity = () => {
   const wrapperWidth = insideRef?.value?.offsetWidth || 0;
@@ -136,6 +149,9 @@ const getDateDiff = (date) => {
 
 const onSliderUpdate = (offset) => {
   offsetX.value = offset;
+  const midTick = [...ticksRef.value].find(tick => [...tick.classList].includes('date__day--is-middle'));
+  const midTickIndex = Number(midTick.getAttribute('data-id'));
+  currentMilestone.value = buildDate(midTickIndex);
   setTicksOpacity();
   setPlanetRotationDebounce();
 }
@@ -149,7 +165,7 @@ const setPlanetRotationDebounce = useDebounceFn(() => {
   if (!middleEvent) {
     return;
   }
-  
+
   const middleEventIndex = Number(middleEvent.getAttribute('data-id'));
   const eventIndex = [...refinedEvents.value].indexOf(middleEventIndex);
   if (eventIndex !== currentSelectedEvent) {
@@ -229,48 +245,37 @@ const goToEvent = (positionToGo) => {
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 800px;
+  max-width: 793px;
   padding: 0 20px;
 
   &__wrapper {
     position: relative;
     width: 100%;
 
-    &__arrows {
-      .arrow {
-        position: absolute;
-        top: 20px;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        cursor: pointer;
-        transition: opacity .2s ease-in-out;
-        opacity: 0.5;
+    &__milestone {
+      text-align: center;
+      margin-bottom: 12px;
 
-        &:hover {
-          opacity: 1;
-        }
-
-        &--left {
-          left: 0;
-        }
-
-        &--right {
-          right: 0;
-        }
-
-        svg {
-          display: block;
-        }
+      > span {
+        color: #FFFFFF;
+        display: inline-block;
+        margin-left: 6px;
+        font-size: 16px;
       }
     }
   }
 
+  &__date-wrapper {
+    position: relative;
+    padding: 0 40px;
+  }
+
   &__inside {
+    position: relative;
     overflow-x: hidden;
     display: flex;
     margin: 0 auto;
-    width: calc(100% - 80px);
+    width: 100%;
   }
 
   // &__mid-tick {
@@ -284,6 +289,36 @@ const goToEvent = (positionToGo) => {
   //   background-color: #D9D9D9;
   // }
 }
+
+.arrows {
+  .arrow {
+    position: absolute;
+    top: 20px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: opacity .2s ease-in-out;
+    opacity: 0.5;
+    padding: 6px;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &--left {
+      left: 0;
+    }
+
+    &--right {
+      right: 0;
+    }
+
+    svg {
+      display: block;
+    }
+  }
+  }
 
 .date {
   position: relative;
@@ -332,6 +367,7 @@ const goToEvent = (positionToGo) => {
       height: 16px;
       background-color: #D9D9D9;
       transition: height .1s ease-out;
+      border-radius: 9999px;
     }
 
     &--is-event {
