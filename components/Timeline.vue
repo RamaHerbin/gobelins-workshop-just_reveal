@@ -74,13 +74,13 @@ const refinedEvents = ref([]);
 let dragObject = null;
 const isMoving = ref(false);
 let currentSelectedEvent = null;
-const currentMilestone = ref(0);
+const currentMilestone = ref(null);
 
 onMounted(() => {
   refinedEvents.value = EVENTS.map(event => getDateDiff(event.date));
   ticksRef.value = dateRef.value.children;
   ticksEvents = [...ticksRef.value].filter((_, i) => refinedEvents.value.includes(i));
-  currentMilestone.value = buildDate(27);
+  currentMilestone.value = buildDate(26);
 
   window.addEventListener('resize', setTicksOpacity);
   setTicksOpacity();
@@ -107,7 +107,7 @@ onMounted(() => {
 });
 
 const buildDate = (number) => {
-  const builtDate = new Date(2020, 0, number);
+  const builtDate = new Date(2019, 11, number + 31 - 25);
   return `${builtDate.getDate()} ${MONTHS[builtDate.getMonth()]} ${builtDate.getFullYear()}`;
 }
 
