@@ -52,18 +52,22 @@ import gsap, { Draggable } from 'gsap/all';
 import CustomEase from 'gsap/CustomEase';
 import { useDebounceFn } from '@vueuse/core';
 import { MONTHS } from '../constants/dates';
+import data from '/assets/data.json';
 
-const EVENTS = [
-  {date: '2020/2/16', type: 'santé'},
-  {date: '2020/2/30', type: 'technologie'},
-  {date: '2020/4/30', type: 'social'},
-  {date: '2020/5/10', type: 'santé'},
-  {date: '2020/6/16', type: 'santé'},
-  {date: '2020/7/16', type: 'santé'},
-  {date: '2020/8/16', type: 'santé'},
-]
+const EVENTS = data;
+
+// const EVENTS = [
+//   {date: '2020/2/16', type: 'santé'},
+//   {date: '2020/2/30', type: 'technologie'},
+//   {date: '2020/4/30', type: 'social'},
+//   {date: '2020/5/10', type: 'santé'},
+//   {date: '2020/6/16', type: 'santé'},
+//   {date: '2020/7/16', type: 'santé'},
+//   {date: '2020/8/16', type: 'santé'},
+// ]
+
 const NB_YEARS = 2;
-const NB_DAYS = NB_YEARS * 12 * 30;
+const NB_DAYS = NB_YEARS * 12 * 30.5 +30 +21 ;
 
 const insideRef = ref(null);
 const dateRef = ref(null);
@@ -75,12 +79,16 @@ let dragObject = null;
 const isMoving = ref(false);
 let currentSelectedEvent = null;
 const currentMilestone = ref(null);
+const dateStartDiff = 26;
+
+const emit = defineEmits(['nextPoi'])
+
 
 onMounted(() => {
   refinedEvents.value = EVENTS.map(event => getDateDiff(event.date));
   ticksRef.value = dateRef.value.children;
   ticksEvents = [...ticksRef.value].filter((_, i) => refinedEvents.value.includes(i));
-  currentMilestone.value = buildDate(26);
+  currentMilestone.value = buildDate(dateStartDiff + 1);
 
   window.addEventListener('resize', setTicksOpacity);
   setTicksOpacity();
@@ -107,7 +115,7 @@ onMounted(() => {
 });
 
 const buildDate = (number) => {
-  const builtDate = new Date(2019, 11, number + 31 - 25);
+  const builtDate = new Date(2020, 0, number - dateStartDiff);
   return `${builtDate.getDate()} ${MONTHS[builtDate.getMonth()]} ${builtDate.getFullYear()}`;
 }
 
@@ -140,7 +148,7 @@ const setTicksOpacity = () => {
 
 const getDateDiff = (date) => {
   const nativeDate = new Date(date);
-  const nativeBaseDate = new Date('2020/1/1');
+  const nativeBaseDate = new Date(2020, 0, -dateStartDiff);
   const diffTime = Math.abs(nativeBaseDate - nativeDate);
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
@@ -158,6 +166,7 @@ const onSliderUpdate = (offset) => {
 
 const setPlanetRotation = (index) => {
   console.log(EVENTS[index]);
+  emit('nextPoi', EVENTS[index]);
 };
 
 const setPlanetRotationDebounce = useDebounceFn(() => {

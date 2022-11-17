@@ -1,8 +1,8 @@
 <template>
     <div>
         <WebGl ref="$webGl"/>
-        <Timeline/>
-        <button class="next" @click="next">Next country</button>
+        <Timeline @next-poi="next"/>
+        <!-- <button class="next" @click="next">Next country</button> -->
     </div>
 </template>
 
@@ -10,14 +10,11 @@
 
 const $webGl = ref(null)
 
-onMounted(() => {
-    console.log('$webGl :>> ', $webGl);
 
-})
 
-const next = () => {
+const next = (currentNew) => {
     console.log('$webGl :>> ', $webGl);
-    $webGl.value.test();
+    $webGl.value.rotate(currentNew);
 }
 
 

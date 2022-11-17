@@ -34,11 +34,11 @@ export default class Scene {
     this.instance.add(this.ambientLight);
     this.instance.add(this.directionalLight);
 
-    // this.setupAxis()
+    this.setupAxis()
   }
 
   setupAxis() {
-    const axesHelper = new THREE.AxesHelper( 5 );
+    const axesHelper = new THREE.AxesHelper( 50 );
     this.instance.add( axesHelper );
   }
 }

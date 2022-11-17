@@ -14,7 +14,7 @@ export default class Camera {
         this.container.matrixAutoUpdate = false;
 
         this.setupInstance();
-        this.setupOrbitControls();
+        // this.setupOrbitControls();
     }
 
     static get instance() {
