@@ -23,6 +23,7 @@
               dayIndex%7 === 0 && "date__day--is-week"
             '
             :key='dayIndex'
+            :data-id='dayIndex'
             @click='refinedEvents.includes(dayIndex) && onPinClick(refinedEvents.indexOf(dayIndex))'
           >
             <div class='date__day__event noselect'>
@@ -43,6 +44,7 @@
 
 import gsap, { Draggable } from 'gsap/all';
 import CustomEase from 'gsap/CustomEase';
+import { useDebounceFn } from '@vueuse/core'
 
 const EVENTS = [
   {date: '2020/2/16'},
@@ -64,6 +66,7 @@ let ticksEvents = [];
 const refinedEvents = ref([]);
 let dragObject = null;
 let isMoving = false;
+let currentSelectedEvent = null;
 
 onMounted(() => {
   refinedEvents.value = EVENTS.map(event => getDateDiff(event.date));
@@ -90,7 +93,7 @@ onMounted(() => {
     },
     onMove: function() {
       onSliderUpdate(this.x);
-    }
+    },
   });
 });
 
@@ -138,7 +141,26 @@ const getDateDiff = (date) => {
 const onSliderUpdate = (offset) => {
   offsetX.value = offset;
   setTicksOpacity();
+  setPlanetRotationDebounce();
 }
+
+const setPlanetRotation = (index) => {
+  console.log(EVENTS[index]);
+};
+
+const setPlanetRotationDebounce = useDebounceFn(() => {
+  const middleEvent = [...ticksRef.value].find(tick => [...tick.classList].includes('date__day--is-middle'));
+  if (!middleEvent) {
+    return;
+  }
+  
+  const middleEventIndex = Number(middleEvent.getAttribute('data-id'));
+  const eventIndex = [...refinedEvents.value].indexOf(middleEventIndex);
+  if (eventIndex !== currentSelectedEvent) {
+    setPlanetRotation(eventIndex);
+    currentSelectedEvent = eventIndex;
+  }
+}, 300);
 
 const getClosest = (target, selection, direction) => {
   selection = direction === 'left' ? selection.filter(n => n < target) : selection.filter(n => n > target + 20);
