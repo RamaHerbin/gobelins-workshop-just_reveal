@@ -20,18 +20,19 @@
             class='date__day'
             :class='
               refinedEvents.includes(dayIndex) && "date__day--is-event",
-              dayIndex%7 === 0 && "date__day--is-week"
+              dayIndex%7 === 0 && "date__day--is-week",
+              refinedEvents.includes(dayIndex) && `date__day--c-${EVENTS[refinedEvents.indexOf(dayIndex)].type.normalize("NFD").replace(/\p{Diacritic}/gu, "")}`
             '
             :key='dayIndex'
             :data-id='dayIndex'
             @click='refinedEvents.includes(dayIndex) && onPinClick(refinedEvents.indexOf(dayIndex))'
           >
+            <span class='date__day__tick noselect'/>
             <div class='date__day__event noselect'>
-              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="13" fill="none">
-                <path fill="#fff" fill-rule="evenodd" d="M1.547 2.253c1.902-1.825 4.98-1.825 6.883 0 1.759 1.687 1.92 4.38.369 6.25l-3.522 4.246a.375.375 0 0 1-.577 0L1.178 8.502c-1.551-1.87-1.39-4.562.369-6.249Z" clip-rule="evenodd"/>
+              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="12" fill="none">
+                <path fill="#fff" fill-rule="evenodd" d="M8.316 10.631c-1.902 1.825-4.98 1.825-6.883 0-1.758-1.687-1.92-4.379-.368-6.249L4.586.136a.375.375 0 0 1 .577 0l3.522 4.246c1.551 1.87 1.39 4.562-.369 6.25Z" clip-rule="evenodd"/>
               </svg>
             </div>
-            <span class='date__day__tick noselect'/>
           </div>
         </div>
         <span class='timeline__mid-tick'/>
@@ -47,13 +48,13 @@ import CustomEase from 'gsap/CustomEase';
 import { useDebounceFn } from '@vueuse/core'
 
 const EVENTS = [
-  {date: '2020/2/16'},
-  {date: '2020/2/30'},
-  {date: '2020/4/30'},
-  {date: '2020/5/10'},
-  {date: '2020/6/16'},
-  {date: '2020/7/16'},
-  {date: '2020/8/16'},
+  {date: '2020/2/16', type: 'santé'},
+  {date: '2020/2/30', type: 'technologie'},
+  {date: '2020/4/30', type: 'social'},
+  {date: '2020/5/10', type: 'santé'},
+  {date: '2020/6/16', type: 'santé'},
+  {date: '2020/7/16', type: 'santé'},
+  {date: '2020/8/16', type: 'santé'},
 ]
 const NB_YEARS = 2;
 const NB_DAYS = NB_YEARS * 12 * 30;
@@ -114,17 +115,12 @@ const setTicksOpacity = () => {
 
       tickRef.style.opacity = opacity;
 
-      const isEventDay = refinedEvents.value.includes(i + 1);
-
-      // if (isEventDay) {
-        const isMiddleTick = i === baseIndex + Math.floor(ticksInView/2) + 1;
-
-        if (isMiddleTick) {
-          tickRef.classList.add('date__day--is-middle');
-        } else {
-          tickRef.classList.remove('date__day--is-middle');
-        }
-      // }
+      const isMiddleTick = i === baseIndex + Math.floor(ticksInView/2) + 1;
+      if (isMiddleTick) {
+        tickRef.classList.add('date__day--is-middle');
+      } else {
+        tickRef.classList.remove('date__day--is-middle');
+      }
     }
   }
 }
@@ -149,7 +145,7 @@ const setPlanetRotation = (index) => {
 };
 
 const setPlanetRotationDebounce = useDebounceFn(() => {
-  const middleEvent = [...ticksRef.value].find(tick => [...tick.classList].includes('date__day--is-middle'));
+  const middleEvent = [...ticksRef.value].find(tick => [...tick.classList].includes('date__day--is-event') && [...tick.classList].includes('date__day--is-middle'));
   if (!middleEvent) {
     return;
   }
@@ -163,7 +159,7 @@ const setPlanetRotationDebounce = useDebounceFn(() => {
 }, 300);
 
 const getClosest = (target, selection, direction) => {
-  selection = direction === 'left' ? selection.filter(n => n < target) : selection.filter(n => n > target + 20);
+  selection = direction === 'left' ? selection.filter(n => n < target + 15) : selection.filter(n => n > target + 20);
   selection = selection.length === 0 ? [-1000] : selection
 
   return selection.reduce((prev, curr) => (Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev));
@@ -216,6 +212,7 @@ const goToEvent = (positionToGo) => {
 </script>
 
 <style lang="scss">
+@use '../assets/styles/variables.scss' as *;
 
 .noselect {
   -webkit-touch-callout: none;
@@ -228,7 +225,7 @@ const goToEvent = (positionToGo) => {
 
 .timeline {
   position: absolute;
-  bottom: 40px;
+  top: 64px;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
@@ -242,8 +239,8 @@ const goToEvent = (positionToGo) => {
     &__arrows {
       .arrow {
         position: absolute;
-        bottom: 20px;
-        transform: translateY(50%);
+        top: 20px;
+        transform: translateY(-50%);
         background: none;
         border: none;
         cursor: pointer;
@@ -295,12 +292,20 @@ const goToEvent = (positionToGo) => {
   display: flex;
   align-items: center;
   height: 40px;
-  padding-top: 40px;
+  padding-bottom: 40px;
 
   &__day {
     position: relative;
     display: flex;
     flex-direction: column;
+
+    @each $color-label, $degrees in $colors {
+      &--c-#{$color-label} {
+        @each $degree-label, $degree in $degrees {
+          --color-#{$degree-label}: #{$degree};
+        }
+      }
+    }
 
     &:not(:first-of-type) {
       padding-left: 5px;
@@ -316,8 +321,8 @@ const goToEvent = (positionToGo) => {
       left: 50%;
       transform-origin: center;
       transform: translateX(-50%);
-      padding-bottom: 16px;
-      bottom: 100%;
+      padding-top: 16px;
+      top: 100%;
       color: #fff;
       transition: transform .15s cubic-bezier(0.35, 0, 0.45, 1);
     }
@@ -343,8 +348,20 @@ const goToEvent = (positionToGo) => {
 
     &--is-event & {
       &__event {
-        display: block;
         cursor: pointer;
+        display: block;
+
+        > svg {
+          display: block;
+
+          > path {
+            fill: var(--color-primary);
+          }
+        }
+      }
+
+      &__tick {
+        background-color: var(--color-primary);
       }
     }
 
