@@ -116,8 +116,8 @@ void main() {
    float noiseColor = pnoise(vec3(vPos.xy, uTime));
 
 
-   vec3 colorA = vec3(0.7, 0.7, 0.7);
-   vec3 colorB = vec3(0.67,0.67,0.7);
+   vec3 colorA = vec3(0.65, 0.65, 0.65);
+   vec3 colorB = vec3(0.62,0.62,0.65);
    vec3 colorMix = mix(colorA, colorB, noiseColor);
 
 
