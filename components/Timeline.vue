@@ -1,7 +1,19 @@
 <template>
   <div class='timeline'>
-    <div class='timeline__wrapper' ref='wrapperRef'>
-      <div class='timeline__inside'>
+    <div class='timeline__wrapper'>
+      <div class='timeline__wrapper__arrows'>
+        <button @click='onArrowClick("left")' class='arrow arrow--left'>
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="19" fill="none">
+            <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m9.697 1.605-8 8 8 8"/>
+          </svg>
+        </button>
+        <button @click='onArrowClick("right")' class='arrow arrow--right'>
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="19" fill="none">
+            <path stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1.934 17.605 8-8-8-8"/>
+          </svg>
+        </button>
+      </div>
+      <div class='timeline__inside' ref='insideRef'>
         <div class='date noselect' ref='dateRef'>
           <div
             v-for='dayIndex in NB_DAYS'
@@ -11,6 +23,7 @@
               dayIndex%7 === 0 && "date__day--is-week"
             '
             :key='dayIndex'
+            @click='refinedEvents.includes(dayIndex) && onPinClick(refinedEvents.indexOf(dayIndex))'
           >
             <div class='date__day__event noselect'>
               <svg xmlns="http://www.w3.org/2000/svg" width="10" height="13" fill="none">
@@ -28,61 +41,61 @@
 
 <script setup>
 
-import { Draggable } from 'gsap/all';
+import gsap, { Draggable } from 'gsap/all';
+import CustomEase from 'gsap/CustomEase';
 
 const EVENTS = [
-  {date: '2020/1/1'},
-  {date: '2020/1/16'},
-  {date: '2020/1/30'},
-  {date: '2020/2/10'},
   {date: '2020/2/16'},
-  {date: '2020/3/16'},
-  {date: '2020/4/16'},
+  {date: '2020/2/30'},
+  {date: '2020/4/30'},
+  {date: '2020/5/10'},
+  {date: '2020/6/16'},
+  {date: '2020/7/16'},
+  {date: '2020/8/16'},
 ]
 const NB_YEARS = 2;
 const NB_DAYS = NB_YEARS * 12 * 30;
 
-const wrapperRef = ref(null);
+const insideRef = ref(null);
 const dateRef = ref(null);
 const offsetX = ref(0);
 const ticksRef = ref([]);
+let ticksEvents = [];
 const refinedEvents = ref([]);
+let dragObject = null;
+let isMoving = false;
 
 onMounted(() => {
   refinedEvents.value = EVENTS.map(event => getDateDiff(event.date));
   ticksRef.value = dateRef.value.children;
+  ticksEvents = [...ticksRef.value].filter((_, i) => refinedEvents.value.includes(i));
 
   window.addEventListener('resize', setTicksOpacity);
   setTicksOpacity();
 
-  Draggable.create(dateRef.value, {
+  dragObject = Draggable.create(dateRef.value, {
     type:"x",
     inertia: true,
     maxDuration: 1.2,
     minDuration: 0,
-    bounds: {minX: -dateRef.value.offsetWidth + wrapperRef.value.offsetWidth, maxX: 0},
+    bounds: {minX: -dateRef.value.offsetWidth + insideRef.value.offsetWidth, maxX: 0},
     edgeResistance: 0.75,
     dragResistance: 0.4,
+    zIndexBoost: false,
     snap: {
       x: [...Array(NB_DAYS).fill(0).map((_, index) => -13 * index + 1)]
     },
     onThrowUpdate: function() {
-      onSliderUpdate(this);
+      onSliderUpdate(this.x);
     },
     onMove: function() {
-      onSliderUpdate(this);
-    },
-    onClick: function(event) {
-      const target = event.target;
-      if (target.closest('svg')) {
-        console.log('clicked event')
-      }
+      onSliderUpdate(this.x);
     }
   });
 });
 
 const setTicksOpacity = () => {
-  const wrapperWidth = wrapperRef?.value?.offsetWidth || 0;
+  const wrapperWidth = insideRef?.value?.offsetWidth || 0;
   const tickWidth = 13;
   const ticksInView = Math.floor(wrapperWidth / tickWidth);
   const baseIndex = Math.floor(-offsetX.value / tickWidth);
@@ -122,9 +135,60 @@ const getDateDiff = (date) => {
   return diffDays;
 }
 
-const onSliderUpdate = (slider) => {
-  offsetX.value = slider.x;
+const onSliderUpdate = (offset) => {
+  offsetX.value = offset;
   setTicksOpacity();
+}
+
+const getClosest = (target, selection, direction) => {
+  selection = direction === 'left' ? selection.filter(n => n < target) : selection.filter(n => n > target + 20);
+  selection = selection.length === 0 ? [-1000] : selection
+
+  return selection.reduce((prev, curr) => (Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev));
+}
+
+const onPinClick = (eventIndex) => {
+  const wrapperWidth = insideRef?.value?.offsetWidth || 0;
+  const eventPos = ticksEvents[eventIndex]?.offsetLeft - wrapperWidth/2;
+  const positionToGo = -eventPos + 7;
+  goToEvent(positionToGo);
+}
+
+const onArrowClick = (direction) => {
+  const wrapperWidth = insideRef?.value?.offsetWidth || 0;
+  const sliderOffsetX = -offsetX.value;
+  const nearestEventPos = getClosest(sliderOffsetX, ticksEvents.map(event => event.offsetLeft - wrapperWidth/2), direction);
+  const positionToGo = -nearestEventPos + 7;
+  goToEvent(positionToGo);
+}
+
+const goToEvent = (positionToGo) => {
+  const distance = Math.abs(positionToGo - dragObject[0].x);
+  let duration = (distance / 100) * 0.2;
+  duration = duration < 0.7 ? 0.7 : duration;
+  duration = duration > 1.1 ? 1.1 : duration;
+
+  if (positionToGo < 0 && positionToGo > -dateRef.value.offsetWidth + insideRef.value.offsetWidth && !isMoving && positionToGo !== dragObject[0].x) {
+    isMoving = true;
+    dragObject[0].disable();
+    gsap.fromTo(dragObject[0].target, {x: dragObject[0].x}, {
+      x: positionToGo,
+      duration: duration,
+      ease: CustomEase.create('cubic', '0.45, 0, 0.3, 1'),
+      onUpdate: function() {
+        if (this.progress() !== 1) {
+          const progress = dragObject[0].x + ((positionToGo - dragObject[0].x) * this.ratio);
+          onSliderUpdate(progress);
+          dragObject[0].update();
+        }
+      },
+      onComplete: function() {
+        dragObject[0].update();
+        dragObject[0].enable();
+        isMoving = false;
+      }
+    });
+  }
 }
 
 </script>
@@ -152,11 +216,42 @@ const onSliderUpdate = (slider) => {
   &__wrapper {
     position: relative;
     width: 100%;
+
+    &__arrows {
+      .arrow {
+        position: absolute;
+        bottom: 20px;
+        transform: translateY(50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        transition: opacity .2s ease-in-out;
+        opacity: 0.5;
+
+        &:hover {
+          opacity: 1;
+        }
+
+        &--left {
+          left: 0;
+        }
+
+        &--right {
+          right: 0;
+        }
+
+        svg {
+          display: block;
+        }
+      }
+    }
   }
 
   &__inside {
     overflow-x: hidden;
     display: flex;
+    margin: 0 auto;
+    width: calc(100% - 80px);
   }
 
   &__mid-tick {
@@ -186,11 +281,11 @@ const onSliderUpdate = (slider) => {
     flex-direction: column;
 
     &:not(:first-of-type) {
-      margin-left: 5px;
+      padding-left: 5px;
     }
 
     &:not(:last-of-type) {
-      margin-right: 5px;
+      padding-right: 5px;
     }
 
     &__event {
@@ -199,9 +294,10 @@ const onSliderUpdate = (slider) => {
       left: 50%;
       transform-origin: center;
       transform: translateX(-50%);
-      bottom: calc(100% + 16px);
+      padding-bottom: 16px;
+      bottom: 100%;
       color: #fff;
-      transition: transform .1s ease-in-out;
+      transition: transform .15s cubic-bezier(0.35, 0, 0.45, 1);
     }
 
     &__tick {
@@ -210,16 +306,22 @@ const onSliderUpdate = (slider) => {
       background-color: #D9D9D9;
     }
 
-    &--is-event & {
+    &--is-event {
       cursor: pointer;
 
+      &:hover {
+        opacity: 1 !important;
+
+        .date__day__event {
+          transform: translateX(-50%) scale(1.5);
+        }
+      }
+    }
+
+    &--is-event & {
       &__event {
         display: block;
-
-        &:hover {
-          transform: translateX(-50%) scale(1.5);
-          cursor: pointer;
-        }
+        cursor: pointer;
       }
     }
 
