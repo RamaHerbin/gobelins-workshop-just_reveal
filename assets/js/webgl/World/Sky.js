@@ -12,9 +12,9 @@ export default class Sky {
     }
 
     addSkyGradient() {
-        const SKY_COLOR = 0x3f4dc4;
-        const GROUND_COLOR = 0x040b4a;
-        const SKY_SIZE = 300;
+        const SKY_COLOR = 0x308D98;
+        const GROUND_COLOR = 0x00043D;
+        const SKY_SIZE = 200;
     
         const vertexShader = `
           varying vec3 vWorldPosition;
@@ -41,11 +41,11 @@ export default class Sky {
           uniforms,
           vertexShader,
           fragmentShader,
-          side: THREE.DoubleSide,
+          side: THREE.BackSide,
         });
     
         const sky = new THREE.Mesh(skyGeo, skyMat);
-        console.log('sky :>> ', sky);
+        // console.log('sky :>> ', sky);
         this.scene.instance.add(sky);
       }
 

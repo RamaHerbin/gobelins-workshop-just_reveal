@@ -24,7 +24,7 @@ export default class Camera {
     setupInstance() {
         const { width, height } = this.sizes.viewport;
         this.instance = new THREE.PerspectiveCamera(75, width / height, 0.01, 800);
-        this.instance.position.set(-50, 0, 0);
+        this.instance.position.set(-10, 0, 0);
         // this.instance.rotation.x = -1.16;
         // this.instance.rotation.y = 90;
         // this.instance.rotation.z = 0;
