@@ -1,7 +1,6 @@
 precision highp float;
 
 
-
     // PERLIN NOISE
 
 
@@ -95,38 +94,30 @@ precision highp float;
 
 
 
-// add noise to the color
+uniform mat4 projectionMatrix;
+uniform mat4 modelViewMatrix;
 
+uniform float uTime;
 
-   uniform float uTime;
+attribute vec3 position;
+attribute vec3 normal;
+attribute vec2 uv;
 
-   uniform float uStrength;
-   uniform float uScale;
-
-
+uniform float depthNoise;
 
 varying vec2 vUv;
 varying vec3 vPos;
 
 void main() {
 
+   vUv = uv;
+   vPos = position;
 
-   // noise noir et blanc sur le blob
-   float noiseColor = pnoise(vec3(vPos.xy, uTime));
-
-   vec3 colorA = vec3(0.2, 0.1, 0.2);
-   vec3 colorB = vec3(0., 0.6, 0.7);
-   vec3 colorMix = mix(colorA, colorB, noiseColor);
-
-
-   // pour associer des turbulences (donc changement de couleur au noise)
-   // On Map l'UV mais ça créé une ligne au moment ou les textures se rejoignent
-   // vec3 result = getPerlinTurbulence(vec2(vUv), uScale, uStrength,uTime*0.05);
-
-   // utiliser vPos.xy au lieu de vUv ça permet de ne pas avoir la ligne de séparation au moment ou la tecture se rejoint
-   vec3 result = getPerlinTurbulence(vec2(vPos.xy), uScale, uStrength,uTime*0.05);
-
-   vec4 color = vec4(vec3(colorMix), 1.);
-
-   gl_FragColor = vec4(color);
+   vec3 prePos = position;
+   float noise = pnoise(position + uTime);
+   //prePos += noise * normal / 5.;
+   prePos += noise * normal / depthNoise; // test pour rajouter un curseur de depth noise
+   
+   vec4 pos = projectionMatrix * modelViewMatrix * vec4( prePos, 0.7);
+   gl_Position = pos;
 }
