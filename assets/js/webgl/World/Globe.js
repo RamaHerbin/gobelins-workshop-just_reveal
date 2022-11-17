@@ -19,7 +19,6 @@ export default class Globe {
 
     this.init();
     this.setupSea();
-    // this.water();
   }
 
   async init() {
@@ -64,7 +63,7 @@ export default class Globe {
     let loader = new THREE.TextureLoader()
 
     const displacement = await loader.load(
-      '/img/elevation_map_5_60-100.png'
+      '/img/elevelation_map_v2_chine_ok.png'
     );
 
     // const texture = await loader.load("/img/map_earth_color.jpg");
@@ -72,7 +71,7 @@ export default class Globe {
     // globeMaterial.normalMap = normalMap;
 
     globeMaterial.displacementMap = displacement;
-    globeMaterial.displacementScale = 5;
+    globeMaterial.displacementScale = 6;
     globeMaterial.displacementBias = 0.;
 
 
@@ -91,7 +90,7 @@ export default class Globe {
 
     globe.rotation.set(-1, 4, -1)
 
-    globe.bumpImageUrl('/img/elevation_map_5_60-100.png');
+    globe.bumpImageUrl('/img/elevelation_map_v2_chine_ok.png');
 
 
 
@@ -196,39 +195,5 @@ export default class Globe {
     // this.scene.instance.add(waves);
     this.scene.instance.add( sea );
   }
-
-  water() {
-    const waterGeometry = new THREE.SphereGeometry(3, 512, 512);
-    // const waterGeometry = new THREE.PlaneGeometry(1000, 1000 );
-
-    const water = new Water(waterGeometry, {
-      textureWidth: 512,
-      textureHeight: 512,
-      waterNormals: new THREE.TextureLoader().load(
-        "/textures/waternormals.jpg",
-        function (texture) {
-          texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
-        }
-      ),
-      // sunDirection: new THREE.Vector3(),
-      // sunColor: 0xffffff,
-      waterColor: 0x3f4dc4,
-      distortionScale: 5,
-      fog: this.scene.instance.fog !== undefined,
-      side: THREE.DoubleSide,
-    });
-
-    water.rotation.x = 0.5;
-    water.rotation.y = 3;
-    water.rotation.z = 0;
-
-    this.scene.instance.add(water);
-  }
-
-
-
-
-
-
 
 }

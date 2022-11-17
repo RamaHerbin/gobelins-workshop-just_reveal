@@ -13,10 +13,6 @@ import { SAOPass } from "three/addons/postprocessing/SAOPass.js";
 import Sky from "./Sky";
 import Skybox from "./Skybox.js"
 
-// import { PlaneMaterial } from "../Materials/AtmosphereMaterial.js";
-
-// import fragmentShader from '/public/shaders/basic.frag';
-// import vertexShader from '/public/shaders/basic.vert';
 
 // import Materials from './Materials';
 // import Controls from './Controls';
@@ -191,35 +187,35 @@ export default class World {
   }
 
 
-  // setupClouds() {
-  //   const globSize = 2;
+  setupClouds() {
+    const globSize = 2
 
-  //   const geometry = new THREE.SphereGeometry(globSize + 1.15, 256, 256);
+    const geometry = new THREE.SphereGeometry(globSize + 1.5, 256, 256);
 
-  //   const material = new THREE.MeshStandardMaterial({
-  //     color: 0xffffff,
-  //     metalness: 0,
-  //     roughness: 1,
-  //   });
+    const material = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      metalness: 0,
+      roughness: 1,
+    });
 
-  //   const texture = new THREE.TextureLoader().load("/img/clouds_map_v2.png");
+    const texture = new THREE.TextureLoader().load("/img/clouds_map_v2.png");
 
-  //   const clouds = new THREE.Mesh(geometry, material);
+    const clouds = new THREE.Mesh(geometry, material);
 
-  //   material.map = texture;
-  //   material.transparent = true;
-  //   material.opacity = 0.4;
+    material.map = texture;
+    material.transparent = true;
+    material.opacity = 0.4;
 
-  //   this.scene.instance.add(clouds);
+    this.scene.instance.add(clouds);
 
-  //   let x = clouds.rotation.x;
-  //   let z = clouds.rotation.z;
+    let x = clouds.rotation.x;
+    let z = clouds.rotation.z;
 
-  //   clouds.rotation.x = 30 + x + this.time;
-  //   clouds.rotation.z = 180 + z + this.time;
+    clouds.rotation.x = 30 + x + this.time;
+    clouds.rotation.z = 180 + z + this.time;
 
-  //   //sphere.rotation.x = tick;
-  // }
+    //sphere.rotation.x = tick;
+  }
 
 
 }
