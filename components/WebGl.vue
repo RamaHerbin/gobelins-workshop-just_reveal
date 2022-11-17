@@ -21,14 +21,21 @@ onMounted(async () => {
 });
 
 
-const test = () => {
-
-  app.world.globe.updateCountry(index);
-  index++;
+const rotate = (news) => {
+  app.world.globe.updateCountry(news)
 }
 
-defineExpose({test:test})
+defineExpose({rotate:rotate})
 
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+
+canvas {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+
+</style>

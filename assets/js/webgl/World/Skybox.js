@@ -7,7 +7,6 @@ export default class Sky {
         this.scene = _option.scene;
         this.camera = _option.camera;
 
-        console.log("test");
         this.addSkyBox()
     }
 

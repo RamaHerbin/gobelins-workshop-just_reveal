@@ -1,4 +1,3 @@
-import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
@@ -12,7 +11,6 @@ export default class PostProcessing {
     this.camera = _option.camera;
 
     this.init();
-
   }
 
   init() {
@@ -32,11 +30,12 @@ export default class PostProcessing {
 
     // comment ligne en dessous pour desac oclusion ambiant
     // this.composer.addPass(saoPass);
-
-
       this.saoPass = saoPass;
       
-    // Init gui
+
+  }
+
+  initGui() {
     const gui = new GUI();
     gui
       .add(saoPass.params, "output", {
@@ -50,26 +49,20 @@ export default class PostProcessing {
         saoPass.params.output = parseInt(value);
       });
 
-      // console.log('SAOPass.OUTPUT.Depth :>> ', SAOPass.OUTPUT.Depth);
+    //   // console.log('SAOPass.OUTPUT.Depth :>> ', SAOPass.OUTPUT.Depth);
 
-    gui.add(saoPass.params, "saoBias", -1, 1);
-    gui.add(saoPass.params, "saoIntensity", 0, 1);
-    gui.add(saoPass.params, "saoScale", 0, 10);
-    gui.add(saoPass.params, "saoKernelRadius", 1, 100);
-    gui.add(saoPass.params, "saoMinResolution", 0, 1);
-    gui.add(saoPass.params, "saoBlur");
-    gui.add(saoPass.params, "saoBlurRadius", 0, 200);
-    gui.add(saoPass.params, "saoBlurStdDev", 0.5, 150);
-    gui.add(saoPass.params, "saoBlurDepthCutoff", 0.0, 0.1);
+    // gui.add(saoPass.params, "saoBias", -1, 1);
+    // gui.add(saoPass.params, "saoIntensity", 0, 1);
+    // gui.add(saoPass.params, "saoScale", 0, 10);
+    // gui.add(saoPass.params, "saoKernelRadius", 1, 100);
+    // gui.add(saoPass.params, "saoMinResolution", 0, 1);
+    // gui.add(saoPass.params, "saoBlur");
+    // gui.add(saoPass.params, "saoBlurRadius", 0, 200);
+    // gui.add(saoPass.params, "saoBlurStdDev", 0.5, 150);
+    // gui.add(saoPass.params, "saoBlurDepthCutoff", 0.0, 0.1);
   }
 
   update() {
-    
-    if(this.composer) {
-        this.composer.render();
-        //console.log('this.saoPass.params.saoIntensity :>> ', this.saoPass.params.saoIntensity);
-        // console.log('this.composer :>> ', this.composer);
-    }
-
+    this.composer?.render();
   }
 }

@@ -1,18 +1,11 @@
 import * as THREE from "three";
 import { gsap } from "gsap";
 
-// import countries from "/assets/globe-data-min.json";
-// import travelHistory from "/assets/my-flights.json";
-// import airportHistory from "/assets/my-airports.json";
-// import countries from "/assets/countries.json";
+import data from "/assets/data.json";
 
-import countries from "/assets/globe-data-min.json";
-import travelHistory from "/assets/my-flights.json"
-import airportHistory from "/assets/my-airports.json"
+import oceanFrag from "assets/shaders/oceanFrag.glsl";
+import oceanVert from "assets/shaders/oceanVert.glsl";
 
-// import fragmentShader from '/shaders/ocean.frag'
-// import vertexShader from '/shaders/ocean.vert'
-   
 export default class Globe {
   /*
    * @constructor
@@ -22,65 +15,190 @@ export default class Globe {
     this.container.matrixAutoUpdate = false;
     this.scene = _option.scene;
     this.camera = _option.camera;
+    this.time = _option.time;
 
     this.globe = null;
     this.dataOnScene = [];
 
     this.init();
-    this.setupSea();
+    // this.setupSea();
 
     this.updateCountry = this.updateCountry.bind(this);
+    this.update = this.update.bind(this);
+
+    this.pointerDown = false;
+
+    // this.initGlobeControls();
   }
 
   async init() {
     const ThreeGlobe = await (await import("three-globe")).default;
-    const self = this;
 
-    // console.log('countries :>> ', countries);
     this.globe = new ThreeGlobe({
       waitForGlobeReady: true,
       animateIn: true,
     })
-      .bumpImageUrl("/img/earth-topology.png")
+      .bumpImageUrl("/img/elevation_map_13_40-100.png")
       .polygonAltitude(0.03)
       .polygonStrokeColor(() => "#111")
       .showAtmosphere(true)
-      .atmosphereColor("#3a228a")
+      .atmosphereColor("#308D98")
       .atmosphereAltitude(0.5)
       .hexPolygonColor("#ffffff");
-
-    // (function moveSpheres() {
-    //   gData.forEach(d => d.lat += 0.2);
-    //   self.globe.customLayerData(self.globe.customLayerData());
-    //   requestAnimationFrame(moveSpheres);
-    // })();
 
     let loader = new THREE.TextureLoader();
 
     const globeMaterial = this.globe.globeMaterial();
-
     globeMaterial.color = new THREE.Color(0xffffff);
-    globeMaterial.emissive = new THREE.Color(0x040b4a);
-    globeMaterial.emissiveIntensity = 0.2;
-    globeMaterial.shininess = 0.5;
+    globeMaterial.emissive = new THREE.Color(0xffffff);
+    globeMaterial.emissiveIntensity = 0.3;
+    globeMaterial.shininess = 1;
 
-    const displacement = await loader.load("/img/bump_maps_custom_v2.webp");
-    // const texture = await loader.load("/img/map_earth_color.jpg");
-
-
-    // globeMaterial.map = texture;
-    // globeMaterial.normalMap = normalMap;
+    const displacement = await loader.load("/img/elevation_map_13_40-100.png");
 
     globeMaterial.displacementMap = displacement;
-
-    globeMaterial.displacementScale = 6;
-    globeMaterial.displacementBias = 0;
+    globeMaterial.displacementScale = 7;
+    globeMaterial.displacementBias = 0.3;
+    globeMaterial.lights = true;
 
     this.globe.receiveShadow = true;
     this.globe.castShadow = true;
     this.globe.scale.set(0.2, 0.2, 0.2);
-    this.globe.rotation.set(-1, 4, -1);
+    this.globe.rotation.set(0, 0, 0);
+    this.globe.position.set(0, -6, 0);
 
+    this.container.add(this.globe);
+
+    // globeMaterial.wireframe = true;
+  }
+
+  updateCountry(news) {
+    const ALTITUDE = 0.05;
+    let color = "green";
+    let currentData = news;
+
+    this.dataOnScene.push(currentData);
+
+    this.globe
+      // .ringsData(this.dataOnScene)
+      // .ringAltitude(1)
+      // .ringColor("rgba(255,255,50, 1)")
+      // .ringMaxRadius(5)
+      // .ringPropagationSpeed(2)
+      // .ringRepeatPeriod(1)
+      .customLayerData(this.dataOnScene)
+      .customThreeObject(
+        (d) =>
+          new THREE.Mesh(
+            new THREE.PlaneGeometry(10, 10),
+            new THREE.MeshLambertMaterial({ color: color })
+          )
+      )
+      .customThreeObjectUpdate((obj, d) => {
+        Object.assign(
+          obj.position,
+          this.globe.getCoords(
+            d.localisation.lat,
+            d.localisation.long,
+            ALTITUDE
+          )
+        );
+      });
+
+    const startX = this.globe.rotation.x;
+    const startY = -this.globe.rotation.y;
+    const endX = currentData.localisation.lat * (Math.PI / 180);
+    const endY = currentData.localisation.long * (Math.PI / 180);
+    const anim = { x: startX, y: startY };
+
+    gsap.to(anim, {
+      duration: 1.2,
+      y: endY,
+      x: endX,
+      onUpdate: () => {
+        this.globe.rotation.set(anim.x, -anim.y, 0);
+      },
+    });
+  }
+
+  initGlobeControls() {
+    window.addEventListener("pointerdown", () => {
+      this.pointerDown = true;
+    });
+
+    window.addEventListener("pointerup", () => {
+      this.pointerDown = false;
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (this.pointerDown) {
+        console.log("e :>> ", e);
+
+        var deltaX = evt.clientX - mouseX,
+          deltaY = evt.clientY - mouseY;
+        mouseX = evt.clientX;
+        mouseY = evt.clientY;
+        this.globe.rotation.y += deltaX / 100;
+        this.globe.rotation.x += deltaY / 100;
+      }
+    });
+  }
+
+  // ADD WATER
+  setupSea() {
+    const geometrySea = new THREE.SphereGeometry(20.3, 256, 256);
+    const geometryWaves = new THREE.SphereGeometry(14.3, 512, 512);
+
+    const material = new THREE.MeshStandardMaterial({
+      color: 0xebebeb,
+      metalness: 0,
+      roughness: 1,
+    });
+
+    const uniforms = {
+      // topColor: { value: new THREE.Color(SKY_COLOR) },
+      // bottomColor: { value: new THREE.Color(GROUND_COLOR) }
+    };
+
+    this.waveMat = new THREE.RawShaderMaterial({
+      uniforms: {
+        uTime: { value: this.time },
+        uStrength: { value: 10 },
+        uScale: { value: 5 },
+        depthNoise: { value: 10 },
+      },
+      vertexShader: oceanVert,
+      fragmentShader: oceanFrag,
+      transparent: true,
+      depthWrite: true,
+    });
+
+    // this.waveMat.lights = true;
+
+    console.log(this.time);
+
+    const waves = new THREE.Mesh(geometryWaves, this.waveMat);
+    const sea = new THREE.Mesh(geometrySea, material);
+
+    sea.receiveShadow = true;
+    sea.castShadow = true;
+
+    waves.receiveShadow = true;
+    waves.castShadow = true;
+    // waves.position.x = 30;
+
+    this.scene.instance.add(waves);
+    // this.scene.instance.add(sea);
+  }
+
+  update(time) {
+    this.time = time;
+    this.waveMat.uniforms.uTime.value = this.time / 15;
+    // console.log(this.time);
+  }
+
+  // DRAFTS
+  setupArc() {
     // setTimeout(() => {
     //   this.globe
     //     .arcsData(travelHistory.flights)
@@ -114,154 +232,5 @@ export default class Globe {
     //     .pointAltitude(0.07)
     //     .pointRadius(0.05);
     // }, 1000);
-
-    this.container.add(this.globe);
-
-    // console.log('globe :>> ', globe);
-
-    // NOTE Cool stuff
-    // globeMaterial.wireframe = true;
   }
-
-  updateCountry(index) {
-    console.log("this.globe :>> ", this.globe);
-
-    const gData = [
-      {
-        lat: 48.8566,
-        lng: 2.3522,
-        alt: 0.1,
-        radius: Math.random() * 5,
-        color: "red",
-      },
-      {
-        lat: 90,
-        lng: 90,
-        alt: 0.03,
-        radius: Math.random() * 5,
-        color: "green",
-      },
-      {
-        lat: 10,
-        lng: 20,
-        alt: 0.03,
-        radius: Math.random() * 5,
-        color: "green",
-      },
-      {
-        lat: 5,
-        lng: 30,
-        alt: 0.03,
-        radius: Math.random() * 5,
-        color: "green",
-      },
-      {
-        lat: 10,
-        lng: 20,
-        alt: 0.03,
-        radius: Math.random() * 5,
-        color: "green",
-      },
-      {
-        lat: 5,
-        lng: 30,
-        alt: 0.03,
-        radius: Math.random() * 5,
-        color: "green",
-      },
-    ];
-
-    this.dataOnScene.push(gData[index]);
-
-    let currentDataCoord = this.globe.getCoords(
-      gData[index].lat,
-      gData[index].lng,
-      gData[index].alt
-    );
-
-    this.globe
-      .customLayerData(this.dataOnScene)
-      .customThreeObject(
-        (d) =>
-          new THREE.Mesh(
-            new THREE.SphereGeometry(d.radius),
-            new THREE.MeshLambertMaterial({ color: d.color })
-          )
-      )
-      .customThreeObjectUpdate((obj, d) => {
-        console.log("index :>> ", index);
-        console.log(d);
-        Object.assign(obj.position, this.globe.getCoords(d.lat, d.lng, d.alt));
-
-        // this.camera.instance.lookAt(obj.position)
-
-        // gsap
-        //   .to(this.camera.instance.position, {
-        //     x: currentDataCoord.x,
-        //     y: currentDataCoord.y,
-        //   })
-        //   .then(this.camera.instance.lookAt(obj.position));
-      });
-
-    console.log("currentDataCoord :>> ", currentDataCoord);
-    console.log(
-      "this.globe.children[0].children[12].children :>> ",
-      this.globe.children[0].children[12].children
-    );
-  }
-
-  // ADD WATER
-  setupSea() {
-    const geometry = new THREE.SphereGeometry(3.02, 256, 256);
-    const material = new THREE.MeshStandardMaterial({
-      color: 0xebebeb,
-      metalness: 0,
-      roughness: 1,
-    });
-
-    const vertexShader = `
-    varying vec3 vNormal;
-    
-    void main()
-    {
-      vNormal = normalize( normalMatrix * normal );
-      gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
-    }`;
-
-    const fragmentShader = `
-    varying vec3 vNormal;
-
-    void main()
-    {
-      float intensity = pow( 0.8 - dot( vNormal, vec3( 0, 0, 1.0 ) ), 12.0 );
-      gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * intensity;
-    }`;
-
-    const uniforms = {
-      // topColor: { value: new THREE.Color(SKY_COLOR) },
-      // bottomColor: { value: new THREE.Color(GROUND_COLOR) }
-    };
-
-    const atmosMat = new THREE.ShaderMaterial({
-      // uniforms,
-      vertexShader,
-      fragmentShader,
-      // side: THREE.FrontSide,
-      // blending: THREE.NormalBlending,
-      // transparent: true
-    });
-
-    const waves = new THREE.Mesh(geometry, atmosMat);
-    const sea = new THREE.Mesh(geometry, material);
-
-    sea.receiveShadow = true;
-    sea.castShadow = true;
-
-    waves.receiveShadow = true;
-    waves.castShadow = true;
-
-    // this.scene.instance.add(waves);
-    this.scene.instance.add(sea);
-  }
-
 }

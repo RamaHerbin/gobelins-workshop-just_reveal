@@ -1,9 +1,4 @@
 import * as THREE from "three";
-
-import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-
   // import * as dat from "dat.gui";
 
 import Renderer from "./Renderer";
@@ -11,17 +6,12 @@ import Sizes from "../utils/Sizes";
 import Camera from "./Camera";
 import Scene from "./Scene";
 import World from "./World";
-
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import PostProcessing from "./PostProcessing";
-
 
 /**
  * App constructor.
  * @constructor
  */
-
-
 export default class Application {
   constructor(_params) {
     this.time = 0;
@@ -82,10 +72,6 @@ export default class Application {
     });
 
     this.scene.instance.add(this.camera.container);
-
-    // this.time.on('tick', () => {
-    //     this.renderer.render(this.scene, this.camera.instance);
-    // });
   }
 
 
@@ -98,9 +84,12 @@ export default class Application {
 
 
   onFrame = () => {
+    this.time += 0.1;
+
     requestAnimationFrame(this.onFrame);
     //this.renderer.render(this.scene.instance, this‡.camera.instance);
-    this.time += 0.1;
+
+    // this.world.globe.update(this.time);
     this.postProcessing.update();
   };
 }

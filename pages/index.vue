@@ -2,7 +2,7 @@
     <div>
         <Start v-if='isStartShow' @onHideStart='hideStart' />
         <WebGl ref="$webGl"/>
-        <Timeline/>
+        <Timeline @next-poi="next"/>
         <!-- <button class="next" @click="next">Next country</button> -->
     </div>
 </template>
@@ -12,13 +12,9 @@
 const $webGl = ref(null)
 const isStartShow = ref(true);
 
-onMounted(() => {
+const next = (currentNew) => {
     console.log('$webGl :>> ', $webGl);
-})
-
-const next = () => {
-    console.log('$webGl :>> ', $webGl);
-    $webGl.value.test();
+    $webGl.value.rotate(currentNew);
 }
 
 const hideStart = () => {
