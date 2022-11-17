@@ -1,4 +1,3 @@
-import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
@@ -12,7 +11,6 @@ export default class PostProcessing {
     this.camera = _option.camera;
 
     this.init();
-
   }
 
   init() {
@@ -32,23 +30,24 @@ export default class PostProcessing {
 
     // comment ligne en dessous pour desac oclusion ambiant
     // this.composer.addPass(saoPass);
-
-
       this.saoPass = saoPass;
       
-    // // Init gui
-    // const gui = new GUI();
-    // gui
-    //   .add(saoPass.params, "output", {
-    //     Beauty: SAOPass.OUTPUT.Beauty,
-    //     "Beauty+SAO": SAOPass.OUTPUT.Default,
-    //     SAO: SAOPass.OUTPUT.SAO,
-    //     Depth: SAOPass.OUTPUT.Depth,
-    //     Normal: SAOPass.OUTPUT.Normal,
-    //   })
-    //   .onChange(function (value) {
-    //     saoPass.params.output = parseInt(value);
-    //   });
+
+  }
+
+  initGui() {
+    const gui = new GUI();
+    gui
+      .add(saoPass.params, "output", {
+        Beauty: SAOPass.OUTPUT.Beauty,
+        "Beauty+SAO": SAOPass.OUTPUT.Default,
+        SAO: SAOPass.OUTPUT.SAO,
+        Depth: SAOPass.OUTPUT.Depth,
+        Normal: SAOPass.OUTPUT.Normal,
+      })
+      .onChange(function (value) {
+        saoPass.params.output = parseInt(value);
+      });
 
     //   // console.log('SAOPass.OUTPUT.Depth :>> ', SAOPass.OUTPUT.Depth);
 
@@ -64,12 +63,6 @@ export default class PostProcessing {
   }
 
   update() {
-    
-    if(this.composer) {
-        this.composer.render();
-        //console.log('this.saoPass.params.saoIntensity :>> ', this.saoPass.params.saoIntensity);
-        // console.log('this.composer :>> ', this.composer);
-    }
-
+    this.composer?.render();
   }
 }
