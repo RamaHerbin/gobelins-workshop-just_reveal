@@ -10,6 +10,7 @@ export default class World {
     this.scene = _option.scene;
     this.renderer = _option.renderer;
     this.camera = _option.camera;
+    this.$canvas = _option.$canvas;
 
     this.container = new THREE.Object3D();
     this.container.matrixAutoUpdate = false;
@@ -37,7 +38,7 @@ export default class World {
   }
 
   setupGlobe() {
-    this.globe = new Globe({scene: this.scene, renderer : this.renderer, camera: this.camera});
+    this.globe = new Globe({scene: this.scene, renderer : this.renderer, camera: this.camera, $canvas:this.$canvas});
 
     this.scene.instance.add(this.globe.container);
   }
