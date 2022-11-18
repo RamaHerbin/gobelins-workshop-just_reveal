@@ -34,7 +34,7 @@ export default class Scene {
     this.instance.add(this.ambientLight);
     this.instance.add(this.directionalLight);
 
-    this.setupAxis()
+    // this.setupAxis()
   }
 
   setupAxis() {

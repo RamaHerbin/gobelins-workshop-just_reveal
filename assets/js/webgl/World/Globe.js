@@ -1,10 +1,13 @@
 import * as THREE from "three";
 import { gsap } from "gsap";
+import hexRgb from 'hex-rgb';
 
 import data from "/assets/data.json";
 
 import oceanFrag from "assets/shaders/oceanFrag.glsl";
 import oceanVert from "assets/shaders/oceanVert.glsl";
+import { COLORS } from "~~/constants"
+import { removeAccents } from "~~/utils/typo"
 
 export default class Globe {
   /*
@@ -93,14 +96,20 @@ export default class Globe {
       lng: currentData.localisation.long
     })
 
+    const ringColor = COLORS.find(el => el.label === removeAccents(currentData.type))?.hex.primary;
+    const ringRgb = hexRgb(ringColor);
+    const higherNumber = Math.min(...[ringRgb.red, ringRgb.green, ringRgb.blue]);
+    console.log(higherNumber);
+
+    const colorInterpolator = t => `rgba(${ringRgb.red - higherNumber}, ${ringRgb.green - higherNumber}, ${ringRgb.blue - higherNumber}, ${1 - t})`;
 
     this.globe
       .ringsData(test)
       .ringAltitude(.1)
-      .ringColor("0xffffff")
-      .ringMaxRadius(2)
-      .ringPropagationSpeed(.5)
-      .ringRepeatPeriod(.5)
+      .ringColor(() => colorInterpolator)
+      .ringMaxRadius(10)
+      .ringPropagationSpeed(3)
+      .ringRepeatPeriod(500)
       .customLayerData(this.dataOnScene)
       .customThreeObject(
         (d) =>
@@ -121,6 +130,7 @@ export default class Globe {
 
         this.arrayOfMeshesToCast.push(obj)
           obj.name = "test"
+          obj.visible = false
       });
 
       this.centerPoints(currentData)
