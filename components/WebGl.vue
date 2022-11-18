@@ -14,7 +14,6 @@ onMounted(async () => {
   app = new Application({
     $canvas: $canvas.value
   });
-
 });
 
 const rotate = (news) => {
@@ -25,9 +24,7 @@ watch(previousNews, () => {
   if (previousNews.value){ 
     emit('previousNewsClicked', previousNews.value)
   };
-
 })
-
 
 defineExpose({rotate:rotate})
 

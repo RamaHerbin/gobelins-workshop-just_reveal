@@ -82,7 +82,7 @@ export default class Globe {
   }
 
   updateCountry(news) {
-    const ALTITUDE = 0.05;
+    const ALTITUDE = 0.11;
     let color = "green";
     let currentData = news;
 
@@ -108,6 +108,20 @@ export default class Globe {
 
     const colorInterpolator = t => `rgba(${ringRgb.red - higherNumber}, ${ringRgb.green - higherNumber}, ${ringRgb.blue - higherNumber}, ${1 - t})`;
 
+
+    function polar2Cartesian(lat, lng, relAltitude = 0) {
+      const phi = (90 - lat) * Math.PI / 180;
+      const theta = (90 - lng) * Math.PI / 180;
+      const r = 100 * (1 + relAltitude);
+      return {
+        x: r * Math.sin(phi) * Math.cos(theta),
+        y: r * Math.cos(phi),
+        z: r * Math.sin(phi) * Math.sin(theta)
+      };
+    }
+    const globeCenter = this.scene.instance.localToWorld(new THREE.Vector3(0, 0, 0)); // translate from local to world coords
+
+
     this.globe
       .ringsData(test)
       .ringAltitude(.1)
@@ -119,7 +133,7 @@ export default class Globe {
       .customThreeObject(
         (d) =>
           new THREE.Mesh(
-            new THREE.PlaneGeometry(10, 10),
+            new THREE.PlaneGeometry(20, 20),
             new THREE.MeshLambertMaterial({ color: color })
           )
       )
@@ -132,10 +146,12 @@ export default class Globe {
             ALTITUDE
           )
         );
+        obj.lookAt(globeCenter);
+
+        obj.rotation.y = 10;
 
         this.arrayOfMeshesToCast.push(obj)
-          obj.name = "test"
-          obj.visible = false
+        obj.visible = false
       });
 
       this.centerPoints(currentData)
@@ -199,6 +215,8 @@ export default class Globe {
 		raycaster.setFromCamera( mouse, this.camera.instance );
 		let intersects = raycaster.intersectObjects( this.arrayOfMeshesToCast, true );
     
+    console.log(intersects);
+
 		if (intersects.length > 0) {
 
       const previousNews = usePreviousNews();
