@@ -1,4 +1,3 @@
-import {Howl, Howler} from 'howler';
 
 export const EVENTS = [
   // {
