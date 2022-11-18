@@ -1,25 +1,7 @@
 import * as THREE from "three";
 
 import Globe from "./Globe";
-import Sky from "./Sky";
-import Marker from "./Marker";
 import Skybox from "./Skybox.js"
-
-
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { Water } from "three/addons/objects/Water.js";
-
-import { GUI } from "three/addons/libs/lil-gui.module.min.js";
-
-import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
-import { SAOPass } from "three/addons/postprocessing/SAOPass.js";
-
-// import { PlaneMaterial } from "../Materials/AtmosphereMaterial.js";
-
-// import fragmentShader from '/public/shaders/basic.frag';
-// import vertexShader from '/public/shaders/basic.vert';
-
 
 
 export default class World {
@@ -28,39 +10,19 @@ export default class World {
     this.scene = _option.scene;
     this.renderer = _option.renderer;
     this.camera = _option.camera;
+    this.$canvas = _option.$canvas;
 
     this.container = new THREE.Object3D();
     this.container.matrixAutoUpdate = false;
-
-    if (this.debug) {
-      this.debugFolder = this.debug.addFolder("world");
-      this.debugFolder.open();
-    }
-
-    this.container = new THREE.Object3D();
-    this.container.matrixAutoUpdate = false;
-
-    // this.setStartingScreen();
 
     this.setupGlobe();
-    this.setupSky();
-    // this.setupMarker();
+    this.setupSkyBox();
     this.time = _option.time;
 
     this.setupLights();
-    // this.setupClouds();
     this.setupBg();
   }
 
-  setStartingScreen() {
-    this.resources.on("progess", (percent) =>
-      console.log(`progress ${percent}/100`)
-    );
-    this.resources.on("ready", () => this.start());
-
-    const { loaded, toLoad } = this.resources.loader;
-    if (loaded === toLoad) this.start();
-  }
 
   setControls() {
     this.controls = new Controls({
@@ -76,66 +38,17 @@ export default class World {
   }
 
   setupGlobe() {
-    this.globe = new Globe({scene: this.scene, renderer : this.renderer, camera: this.camera});
+    this.globe = new Globe({scene: this.scene, renderer : this.renderer, camera: this.camera, $canvas:this.$canvas});
 
     this.scene.instance.add(this.globe.container);
   }
 
-  setupSky() {
-    this.sky = new Sky({scene: this.scene, renderer : this.renderer, camera: this.camera});
-
-  }
+  setupSkyBox() {
+    this.skybox = new Skybox({scene: this.scene, renderer : this.renderer, camera: this.camera})
+    }
 
   setupBg() {
     this.renderer.instance.setClearColor(0x040b4a);
-  }
-
-
-  setupSphere() {
-    const globSize = 2;
-
-    const geometry = new THREE.SphereGeometry(globSize, 256, 256);
-    const material = new THREE.MeshStandardMaterial({
-      color: 0xffffff,
-      metalness: 0,
-      roughness: 1,
-    });
-
-    const displacement = new THREE.TextureLoader().load(
-      "/img/bump_maps_custom_v2.webp"
-    );
-
-    
-    // const texture = new THREE.TextureLoader().load('/img/map_earth_color.jpg');
-    // const texture = new THREE.TextureLoader().load("/img/cot.webp");
-    // const emissive = new THREE.TextureLoader().load('/img/map_earth_color.jpg');
-
-    const sphere = new THREE.Mesh(geometry, material);
-
-    // material.map = texture;
-
-    material.displacementMap = displacement;
-    material.displacementScale = 0.2;
-    material.displacementBias = 1;
-
-    // material.emissive = 0x000000;
-    // material.emissiveIntensity = 0.1;
-    // material.emissiveMap = emissive
-
-    sphere.receiveShadow = true;
-    sphere.castShadow = true;
-
-    sphere.rotation.x = -0.3;
-    sphere.rotation.y = 1.5;
-    sphere.rotation.z = 0;
-
-    this.scene.instance.add(sphere);
-  }
-
-  setupMarker() {
-    this.marker = new Marker();
-
-    this.scene.instance.add(this.marker.container);
   }
 
   setupLights() {

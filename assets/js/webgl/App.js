@@ -1,6 +1,4 @@
 import * as THREE from "three";
-
-
   // import * as dat from "dat.gui";
 
 import Renderer from "./Renderer";
@@ -9,7 +7,6 @@ import Camera from "./Camera";
 import Scene from "./Scene";
 import World from "./World";
 import PostProcessing from "./PostProcessing";
-
 
 /**
  * App constructor.
@@ -75,14 +72,12 @@ export default class Application {
     });
 
     this.scene.instance.add(this.camera.container);
-
-  
   }
 
 
   setupWorld() {
     //TODO: INIT WORLD
-    this.world = new World({scene: this.scene, time: this.time, renderer : this.renderer, camera: this.camera});
+    this.world = new World({scene: this.scene, time: this.time, renderer : this.renderer, camera: this.camera, $canvas:this.$canvas});
     this.scene.instance.add(this.world.container);
 
   }
@@ -94,7 +89,7 @@ export default class Application {
     requestAnimationFrame(this.onFrame);
     //this.renderer.render(this.scene.instance, this‡.camera.instance);
 
-    this.world.globe.update(this.time);
+    // this.world.globe.update(this.time);
     this.postProcessing.update();
   };
 }

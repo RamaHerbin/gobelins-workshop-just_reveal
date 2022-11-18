@@ -1,23 +1,25 @@
 <template>
     <div>
+        <Start v-if='isStartShow' @onHideStart='hideStart' />
+        <Timeline @next-poi="next"/>
+        <EventInfos/>
         <WebGl ref="$webGl"/>
-        <Timeline/>
-        <button class="next" @click="next">Next country</button>
+        <!-- <button class="next" @click="next">Next country</button> -->
     </div>
 </template>
 
 <script setup>
 
 const $webGl = ref(null)
+const isStartShow = ref(true);
 
-onMounted(() => {
+const next = (currentNew) => {
     console.log('$webGl :>> ', $webGl);
+    $webGl.value.rotate(currentNew);
+}
 
-})
-
-const next = () => {
-    console.log('$webGl :>> ', $webGl);
-    $webGl.value.test();
+const hideStart = () => {
+  isStartShow.value = false;
 }
 
 

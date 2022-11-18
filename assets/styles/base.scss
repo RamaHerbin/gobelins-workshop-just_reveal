@@ -1,0 +1,45 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #111;
+  font-family: 'Now';
+  font-weight: 400;
+  font-size: 20px;
+  overflow: hidden;
+}
+
+h1 {
+  font-size: 65px;
+  font-weight: 500;
+}
+
+h2 {
+  font-size: 45px;
+  font-weight: 500;
+}
+
+p {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.remove-font-top {
+  position: relative;
+  bottom: 0.05em;
+}
+
+.hide-block {
+  display: block;
+  overflow: hidden;
+  position: relative;
+
+  > * {
+    display: block;
+  }
+}

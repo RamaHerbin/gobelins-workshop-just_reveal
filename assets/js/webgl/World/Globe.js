@@ -1,11 +1,11 @@
 import * as THREE from "three";
 import { gsap } from "gsap";
 
-import data from '/assets/data.json'
+import data from "/assets/data.json";
 
-import oceanFrag from 'assets/shaders/oceanFrag.glsl'
-import oceanVert from 'assets/shaders/oceanVert.glsl'
-   
+import oceanFrag from "assets/shaders/oceanFrag.glsl";
+import oceanVert from "assets/shaders/oceanVert.glsl";
+
 export default class Globe {
   /*
    * @constructor
@@ -16,17 +16,25 @@ export default class Globe {
     this.scene = _option.scene;
     this.camera = _option.camera;
     this.time = _option.time;
-
+    this.$canvas = _option.$canvas;
 
     this.globe = null;
     this.dataOnScene = [];
-
+    this.arrayOfMeshesToCast = []
     this.init();
-    this.setupSea();
+    // this.setupSea();
 
     this.updateCountry = this.updateCountry.bind(this);
     this.update = this.update.bind(this);
 
+    this.isPointerDown = false;
+    this.isCursorMoved = false;
+
+
+    this.mouseX = 0;
+    this.mouseY = 0;
+
+    this.initGlobeControls();
   }
 
   async init() {
@@ -36,17 +44,13 @@ export default class Globe {
       waitForGlobeReady: true,
       animateIn: true,
     })
-      // .bumpImageUrl("/img/earth-topology.png")
       .bumpImageUrl("/img/elevation_map_13_40-100.png")
-
       .polygonAltitude(0.03)
       .polygonStrokeColor(() => "#111")
       .showAtmosphere(true)
       .atmosphereColor("#308D98")
       .atmosphereAltitude(0.5)
       .hexPolygonColor("#ffffff");
-
-    this.globe.rotation.set(0, 0, 0);
 
     let loader = new THREE.TextureLoader();
 
@@ -56,72 +60,143 @@ export default class Globe {
     globeMaterial.emissiveIntensity = 0.3;
     globeMaterial.shininess = 0.2;
 
-
     const displacement = await loader.load("/img/elevation_map_13_40-100.png");
 
-
-    // globeMaterial.map = texture;
-    // globeMaterial.normalMap = normalMap;
-
     globeMaterial.displacementMap = displacement;
-
     globeMaterial.displacementScale = 7;
     globeMaterial.displacementBias = 0.3;
     globeMaterial.lights = true;
 
-
-
     this.globe.receiveShadow = true;
     this.globe.castShadow = true;
     this.globe.scale.set(0.2, 0.2, 0.2);
+    this.globe.rotation.set(0, 0, 0);
+    this.globe.position.set(0, -6, 0);
+
     this.container.add(this.globe);
 
     // globeMaterial.wireframe = true;
   }
 
-  updateCountry(index) {
-
+  updateCountry(news) {
     const ALTITUDE = 0.05;
-    let color = "green"
-    let currentData = data[index]
+    let color = "green";
+    let currentData = news;
 
     this.dataOnScene.push(currentData);
 
+    console.log('this.dataOnScene :>> ', this.dataOnScene);
+    let test = []
+
+    test.push({
+      lat: currentData.localisation.lat,
+      lng: currentData.localisation.long
+    })
+
+
     this.globe
-      // .ringsData(this.dataOnScene)
-      // .ringAltitude(1)
-      // .ringColor("rgba(255,255,50, 1)")
-      // .ringMaxRadius(5)
-      // .ringPropagationSpeed(2)
-      // .ringRepeatPeriod(1)
+      .ringsData(test)
+      .ringAltitude(.1)
+      .ringColor("0xffffff")
+      .ringMaxRadius(2)
+      .ringPropagationSpeed(.5)
+      .ringRepeatPeriod(.5)
       .customLayerData(this.dataOnScene)
       .customThreeObject(
         (d) =>
           new THREE.Mesh(
-            new THREE.PlaneGeometry( 10, 10 ),
+            new THREE.PlaneGeometry(10, 10),
             new THREE.MeshLambertMaterial({ color: color })
           )
       )
       .customThreeObjectUpdate((obj, d) => {
-        Object.assign(obj.position, this.globe.getCoords(d.localisation.lat, d.localisation.long, ALTITUDE));
+        Object.assign(
+          obj.position,
+          this.globe.getCoords(
+            d.localisation.lat,
+            d.localisation.long,
+            ALTITUDE
+          )
+        );
+
+        this.arrayOfMeshesToCast.push(obj)
+          obj.name = "test"
       });
 
+      this.centerPoints(currentData)
+
+    console.log('this.globe :>> ', this.globe);
+  }
+
+  centerPoints(data, modifierX = 0,modifierY = 0) {
     const startX = this.globe.rotation.x;
     const startY = -this.globe.rotation.y;
-    const endX = currentData.localisation.lat * (Math.PI/180);
-    const endY = currentData.localisation.long * (Math.PI/180);
-    const anim = {x:startX, y:startY };
+    const endX = data.localisation.lat * (Math.PI / 180);
+    const endY = data.localisation.long * (Math.PI / 180);
+    const anim = { x: startX, y: startY };
 
-    gsap.to(anim, {duration:1.2, y:endY, x: endX, onUpdate: () => {
-      this.globe.rotation.set(anim.x, -anim.y, 0);
-    }})
+    gsap.to(anim, {
+      duration: 1.2,
+      y: endY + modifierY,
+      x: endX + modifierX,
+      onUpdate: () => {
+        this.globe.rotation.set(anim.x, -anim.y, 0);
+      },
+    });
+  }
+
+  initGlobeControls() {
+
+    this.$canvas.addEventListener("pointerdown", (e) => {
+      this.isPointerDown = true;
+      this.mouseX = e.clientX;
+      this.mouseY = e.clientY;
+    });
+
+    this.$canvas.addEventListener("pointerup", (e) => {
+      this.isPointerDown = false;
+
+      if (!this.isCursorMoved) {
+        this.checkSurface(e.offsetX, e.offsetY)
+      }
+      this.isCursorMoved = false;
+    });
+
+    this.$canvas.addEventListener("mousemove", (e) => {
+      if (this.isPointerDown) {
+        this.isCursorMoved = true;
+        var deltaX = e.clientX - this.mouseX,
+          deltaY = e.clientY - this.mouseY;
+        this.mouseX = e.clientX;
+        this.mouseY = e.clientY;
+        this.globe.rotation.y += deltaX / 100;
+        this.globe.rotation.x += deltaY / 100;
+      }
+    });
+  }
+
+  checkSurface(x, y) {
+    const mouse = new THREE.Vector2();
+  	const raycaster = new THREE.Raycaster();
+
+    mouse.x = ( x / window.innerWidth ) * 2 - 1;
+		mouse.y = - ( y / window.innerHeight ) * 2 + 1;
+		raycaster.setFromCamera( mouse, this.camera.instance );
+		let intersects = raycaster.intersectObjects( this.arrayOfMeshesToCast, true );
+
+    
+		if (intersects.length > 0) {
+      this.globe.showAtmosphere(false)
+
+      this.centerPoints(intersects[0].object.__data, -.25, -.25)
+      gsap.to(this.globe.position, {duration:1, x:-24, y: -10, z: 14})
+		}
   }
 
   // ADD WATER
   setupSea() {
     const geometrySea = new THREE.SphereGeometry(20.3, 256, 256);
     const geometryWaves = new THREE.SphereGeometry(14.3, 512, 512);
-
 
     const material = new THREE.MeshStandardMaterial({
       color: 0xebebeb,
@@ -134,18 +209,18 @@ export default class Globe {
       // bottomColor: { value: new THREE.Color(GROUND_COLOR) }
     };
 
-    this.waveMat = new THREE.RawShaderMaterial ({
-      uniforms :{
-        uTime : {value:this.time},
-        uStrength : {value:10},
-        uScale : {value:5},
-        depthNoise : {value:10},
+    this.waveMat = new THREE.RawShaderMaterial({
+      uniforms: {
+        uTime: { value: this.time },
+        uStrength: { value: 10 },
+        uScale: { value: 5 },
+        depthNoise: { value: 10 },
       },
-    vertexShader: oceanVert, 
-    fragmentShader : oceanFrag,
-    transparent : true,
-    depthWrite : true,
-    })
+      vertexShader: oceanVert,
+      fragmentShader: oceanFrag,
+      transparent: true,
+      depthWrite: true,
+    });
 
     // this.waveMat.lights = true;
 
@@ -161,28 +236,19 @@ export default class Globe {
     waves.castShadow = true;
     // waves.position.x = 30;
 
-
     this.scene.instance.add(waves);
     // this.scene.instance.add(sea);
-
   }
 
+  update(time) {
+    this.time = time;
+    this.waveMat.uniforms.uTime.value = this.time / 15;
+    // console.log(this.time);
+  }
 
-    update(time) {
-      this.time = time;
-      this.waveMat.uniforms.uTime.value = this.time / 15
-      // console.log(this.time);
-    }
-
-
-
-
-
-
-
-// DRAFTS
+  // DRAFTS
   setupArc() {
-        // setTimeout(() => {
+    // setTimeout(() => {
     //   this.globe
     //     .arcsData(travelHistory.flights)
     //     .arcColor((e) => {
