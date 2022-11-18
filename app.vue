@@ -2,23 +2,9 @@
   <NuxtLayout />
 </template>
 
-<style>
-
-*,
-*::after,
-*::before {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background-color: #111;
-}
-
-</style>
-
 <script setup>
 
+import './assets/styles/main.scss';
 import { gsap } from "gsap";
 import { Draggable } from "gsap/Draggable.js";
 import { InertiaPlugin } from "gsap/InertiaPlugin.js";

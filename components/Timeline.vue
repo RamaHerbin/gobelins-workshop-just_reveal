@@ -25,7 +25,7 @@
               :class='
                 refinedEvents.includes(dayIndex) && "date__day--is-event",
                 dayIndex%7 === 0 && "date__day--is-week",
-                refinedEvents.includes(dayIndex) && `date__day--c-${EVENTS[refinedEvents.indexOf(dayIndex)].type.normalize("NFD").replace(/\p{Diacritic}/gu, "")}`
+                refinedEvents.includes(dayIndex) && `date__day--c-${removeAccents(EVENTS[refinedEvents.indexOf(dayIndex)].type)}`
               '
               :key='dayIndex'
               :data-id='dayIndex'
@@ -52,23 +52,14 @@ import gsap, { Draggable } from 'gsap/all';
 import CustomEase from 'gsap/CustomEase';
 import { useDebounceFn } from '@vueuse/core';
 import { MONTHS } from '../constants/dates';
-import data from '/assets/data.json';
-
-const EVENTS = data;
-
-// const EVENTS = [
-//   {date: '2020/2/16', type: 'santé'},
-//   {date: '2020/2/30', type: 'technologie'},
-//   {date: '2020/4/30', type: 'social'},
-//   {date: '2020/5/10', type: 'santé'},
-//   {date: '2020/6/16', type: 'santé'},
-//   {date: '2020/7/16', type: 'santé'},
-//   {date: '2020/8/16', type: 'santé'},
-// ]
+import { EVENTS } from '../constants/events';
+import { removeAccents } from '../utils/typo';
 
 const NB_YEARS = 2;
-const NB_DAYS = NB_YEARS * 12 * 30.5 +30 +21 ;
+const NB_DAYS = NB_YEARS * 12 * 30.5 +30 +21;
 
+const isViewDetail = useDetailView();
+const currentEvent = useCurrentEvent();
 const insideRef = ref(null);
 const dateRef = ref(null);
 const offsetX = ref(0);
@@ -85,7 +76,7 @@ const emit = defineEmits(['nextPoi'])
 
 
 onMounted(() => {
-  refinedEvents.value = EVENTS.map(event => getDateDiff(event.date));
+  refinedEvents.value = EVENTS.sort((a, b) => new Date(a.date) - new Date(b.date)).map(event => getDateDiff(event.date));
   ticksRef.value = dateRef.value.children;
   ticksEvents = [...ticksRef.value].filter((_, i) => refinedEvents.value.includes(i));
   currentMilestone.value = buildDate(dateStartDiff + 1);
@@ -165,8 +156,9 @@ const onSliderUpdate = (offset) => {
 }
 
 const setPlanetRotation = (index) => {
-  console.log(EVENTS[index]);
   emit('nextPoi', EVENTS[index]);
+  currentEvent.value = EVENTS[index];
+  isViewDetail.value = true;
 };
 
 const setPlanetRotationDebounce = useDebounceFn(() => {
@@ -181,7 +173,7 @@ const setPlanetRotationDebounce = useDebounceFn(() => {
     setPlanetRotation(eventIndex);
     currentSelectedEvent = eventIndex;
   }
-}, 300);
+}, 100);
 
 const getClosest = (target, selection, direction) => {
   selection = direction === 'left' ? selection.filter(n => n < target) : selection.filter(n => n > target + 12);
@@ -213,7 +205,6 @@ const goToEvent = (positionToGo) => {
 
   if (positionToGo < 0 && positionToGo > -dateRef.value.offsetWidth + insideRef.value.offsetWidth && !isMoving.value && positionToGo !== dragObject[0].x) {
     isMoving.value = true;
-    dragObject[0].disable();
     gsap.fromTo(dragObject[0].target, {x: dragObject[0].x}, {
       x: positionToGo,
       duration: duration,
@@ -227,7 +218,10 @@ const goToEvent = (positionToGo) => {
       },
       onComplete: function() {
         dragObject[0].update();
-        dragObject[0].enable();
+        isMoving.value = false;
+      },
+      onInterrupt: function() {
+        dragObject[0].update();
         isMoving.value = false;
       }
     });
@@ -250,6 +244,7 @@ const goToEvent = (positionToGo) => {
 
 .timeline {
   position: absolute;
+  z-index: 105;
   top: 64px;
   left: 50%;
   transform: translateX(-50%);

@@ -6,7 +6,7 @@ export default defineNuxtConfig({
     plugins: [glsl()],
   },
   css: [
-    "normalize.css",
+    // "normalize.css",
     // "~/assets/fonts/graphik/stylesheet.css",
     // "~/assets/styles/mixins.scss",
   ],
