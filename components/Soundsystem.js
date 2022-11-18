@@ -84,7 +84,7 @@ export const bgSound = new Howl({
          '/audio/vox_news_wet/scotland.mp3',
          '/audio/vox_news_wet/uk.mp3',
           ],
-    volume: 0.5 * globalvolume,
+    volume: 0.8 * globalvolume,
   })
 
 
