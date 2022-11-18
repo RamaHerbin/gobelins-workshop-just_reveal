@@ -89,7 +89,9 @@ export default class Application {
     requestAnimationFrame(this.onFrame);
     //this.renderer.render(this.scene.instance, this‡.camera.instance);
 
-    // this.world.globe.update(this.time);
+    this.world.globe.update(this.time);
+    // this.world.particles.update(this.time);
+
     this.postProcessing.update();
   };
 }

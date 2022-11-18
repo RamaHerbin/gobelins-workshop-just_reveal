@@ -50,11 +50,25 @@
 
 import gsap, { Draggable } from 'gsap/all';
 import CustomEase from 'gsap/CustomEase';
-import { useDebounceFn } from '@vueuse/core';
+import { useDebounceFn, useThrottleFn } from '@vueuse/core';
 import { MONTHS } from '../constants/dates';
 import { EVENTS } from '../constants/events';
 import { removeAccents } from '../utils/typo';
 
+import {Howl, Howler} from 'howler';
+import { bgSound, startSound, scrollSound, gotonewEventSound , longswooshSound, shortswooshSound, AnimalSound, VoxSound } from './Soundsystem';
+
+
+
+const EVENTS = [
+  {date: '2020/2/16', type: 'santé'},
+  {date: '2020/2/30', type: 'technologie'},
+  {date: '2020/4/30', type: 'social'},
+  {date: '2020/5/10', type: 'santé'},
+  {date: '2020/6/16', type: 'santé'},
+  {date: '2020/7/16', type: 'santé'},
+  {date: '2020/8/16', type: 'santé'},
+]
 const NB_YEARS = 2;
 const NB_DAYS = NB_YEARS * 12 * 30.5 +30 +21;
 
@@ -70,6 +84,7 @@ let dragObject = null;
 const isMoving = ref(false);
 let currentSelectedEvent = null;
 const currentMilestone = ref(null);
+let currentTickIndex = 0;
 const dateStartDiff = 26;
 
 const emit = defineEmits(['nextPoi'])
@@ -127,9 +142,14 @@ const setTicksOpacity = () => {
 
       tickRef.style.opacity = opacity;
 
+
       const isMiddleTick = i === baseIndex + Math.floor(ticksInView/2) + 1;
       if (isMiddleTick) {
         tickRef.classList.add('date__day--is-middle');
+        if (currentTickIndex != i) {
+          currentTickIndex = i;
+          throttleTickSound();
+        }
       } else {
         tickRef.classList.remove('date__day--is-middle');
       }
@@ -195,6 +215,9 @@ const onArrowClick = (direction) => {
   const nearestEventPos = getClosest(sliderOffsetX, ticksEvents.map(event => event.offsetLeft - wrapperWidth/2), direction);
   const positionToGo = -nearestEventPos + 7;
   goToEvent(positionToGo);
+  if(!bgSound.playing()) {
+      bgSound.play()
+    }
 }
 
 const goToEvent = (positionToGo) => {
@@ -223,10 +246,15 @@ const goToEvent = (positionToGo) => {
       onInterrupt: function() {
         dragObject[0].update();
         isMoving.value = false;
+        shortswooshSound.play();
       }
     });
   }
 }
+
+const throttleTickSound = useThrottleFn(() => {
+  scrollSound.play();
+}, 50)
 
 </script>
 

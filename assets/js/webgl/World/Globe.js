@@ -67,6 +67,8 @@ export default class Globe {
     globeMaterial.displacementBias = 0.3;
     globeMaterial.lights = true;
 
+
+
     this.globe.receiveShadow = true;
     this.globe.castShadow = true;
     this.globe.scale.set(0.2, 0.2, 0.2);
