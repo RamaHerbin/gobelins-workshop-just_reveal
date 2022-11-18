@@ -1,27 +1,41 @@
 <template>
+    <LoadingScreen v-if='isLoading' @onHideLoading='hideLoading'/>
     <div>
-        <Start v-if='isStartShow' @onHideStart='hideStart' />
-        <Timeline @next-poi="next"/>
+        <Start v-if='isStartShow' @onHideStart='hideStart'/>
+        <Timeline ref="$timeline" :EVENTS="EVENTS"  @next-poi="next"/>
         <EventInfos/>
-        <WebGl ref="$webGl"/>
+        <WebGl ref="$webGl" @previousNewsClicked="test"/>
         <!-- <button class="next" @click="next">Next country</button> -->
     </div>
 </template>
 
 <script setup>
+import { EVENTS } from '../constants/events';
+
+
 
 const $webGl = ref(null)
+const $timeline = ref(null)
 const isStartShow = ref(true);
+const isLoading = ref(true);
 
 const next = (currentNew) => {
-    console.log('$webGl :>> ', $webGl);
     $webGl.value.rotate(currentNew);
 }
 
-const hideStart = () => {
-  isStartShow.value = false;
+const test = (data) => {
+    let test = EVENTS.findIndex(el => el.date == data.date)
+    $timeline.value.onPinClick(test);
 }
 
+const hideStart = () => {
+    $timeline.value.onPinClick(0);
+    isStartShow.value = false;
+}
+
+const hideLoading = () => {
+  isLoading.value = false;
+}
 
 </script>
 

@@ -52,7 +52,6 @@ import gsap, { Draggable } from 'gsap/all';
 import CustomEase from 'gsap/CustomEase';
 import { useDebounceFn, useThrottleFn } from '@vueuse/core';
 import { MONTHS } from '../constants/dates';
-import { EVENTS } from '../constants/events';
 import { removeAccents } from '../utils/typo';
 
 import {Howl, Howler} from 'howler';
@@ -88,10 +87,11 @@ let currentTickIndex = 0;
 const dateStartDiff = 26;
 
 const emit = defineEmits(['nextPoi'])
+const props = defineProps(["EVENTS"])
 
 
 onMounted(() => {
-  refinedEvents.value = EVENTS.sort((a, b) => new Date(a.date) - new Date(b.date)).map(event => getDateDiff(event.date));
+  refinedEvents.value = props.EVENTS.sort((a, b) => new Date(a.date) - new Date(b.date)).map(event => getDateDiff(event.date));
   ticksRef.value = dateRef.value.children;
   ticksEvents = [...ticksRef.value].filter((_, i) => refinedEvents.value.includes(i));
   currentMilestone.value = buildDate(dateStartDiff + 1);
@@ -176,8 +176,8 @@ const onSliderUpdate = (offset) => {
 }
 
 const setPlanetRotation = (index) => {
-  emit('nextPoi', EVENTS[index]);
-  currentEvent.value = EVENTS[index];
+  emit('nextPoi', props.EVENTS[index]);
+  currentEvent.value = props.EVENTS[index];
   isViewDetail.value = true;
 };
 
@@ -258,6 +258,9 @@ const goToEvent = (positionToGo) => {
 const throttleTickSound = useThrottleFn(() => {
   scrollSound.play();
 }, 50)
+
+
+defineExpose({onPinClick:onPinClick})
 
 
 </script>

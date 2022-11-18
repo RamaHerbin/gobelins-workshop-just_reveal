@@ -22,7 +22,6 @@ export default class Application {
     this.scene = new Scene({app: this});
     this.renderer = new Renderer(this.$canvas, this.sizes.viewport);
 
-
     this.sizes.on("resize", () => {
       const { width, height } = this.sizes.viewport;
       this.renderer.instance.setSize(width, height);
