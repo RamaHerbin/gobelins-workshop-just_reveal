@@ -1,7 +1,9 @@
 <template>
   <div class='start' ref='divRef'>
     <div class='start__title'>
-      <h1>Good news around the world</h1>
+      <h1>
+        <span class='hide-span'>Good news around the world</span>
+      </h1>
       <span class='start__title__subtitle'>2020 — 2022</span>
     </div>
     <div class='start__cta'>
@@ -26,7 +28,14 @@ let dragObject = null;
 let divRef = ref(null);
 
 onMounted(() => {
-  console.log(window.innerHeight)
+  setTimeout(() => {
+    gsap.to('.hide-span', {
+      y: 0,
+      duration: 1.4,
+      ease: 'power4.out',
+    });
+  }, 6600);
+
   dragObject = Draggable.create(divRef.value, {
     type:"y",
     inertia: true,
@@ -121,6 +130,12 @@ onMounted(() => {
       font-weight: 400;
       margin: 0;
       padding: 0 33px;
+      overflow: hidden;
+
+      > span {
+        display: block;
+        transform: translateY(100%);
+      }
 
       &::before,
       &::after {

@@ -1,6 +1,7 @@
 <template>
+    <LoadingScreen v-if='isLoading' @onHideLoading='hideLoading'/>
     <div>
-        <Start v-if='isStartShow' @onHideStart='hideStart' />
+        <Start v-if='isStartShow' @onHideStart='hideStart'/>
         <Timeline @next-poi="next"/>
         <EventInfos/>
         <WebGl ref="$webGl"/>
@@ -12,16 +13,20 @@
 
 const $webGl = ref(null)
 const isStartShow = ref(true);
+const isLoading = ref(true);
 
 const next = (currentNew) => {
-    console.log('$webGl :>> ', $webGl);
-    $webGl.value.rotate(currentNew);
+  console.log('$webGl :>> ', $webGl);
+  $webGl.value.rotate(currentNew);
 }
 
 const hideStart = () => {
   isStartShow.value = false;
 }
 
+const hideLoading = () => {
+  isLoading.value = false;
+}
 
 </script>
 
