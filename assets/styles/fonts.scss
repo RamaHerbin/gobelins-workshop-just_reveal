@@ -23,6 +23,14 @@
 }
 
 @font-face {
+  font-family: 'Now';
+  font-style: normal;
+  font-weight: 800;
+  src: url(../fonts/now-black-webfont.woff) format("woff"),
+        url(../fonts/now-black-webfont.woff2) format("woff2"),
+}
+
+@font-face {
   font-family: 'Newyork';
   font-style: normal;
   font-weight: 400;

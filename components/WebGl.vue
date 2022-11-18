@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <canvas ref="$canvas" class="js-canvas"></canvas>
-  </div>
+  <canvas ref="$canvas" class="js-canvas"></canvas>
 </template>
 
 <script setup>

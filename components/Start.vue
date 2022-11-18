@@ -34,6 +34,8 @@ onMounted(() => {
     edgeResistance: 1,
     dragResistance: 0.6,
     zIndexBoost: false,
+    maxDuration: 1,
+    minDuration: 1,
     snap: {
       y: [0]
     },
@@ -54,13 +56,13 @@ onMounted(() => {
     },
     onClick: function() {
       gsap.to(this.target, {
-        y: -60,
-        duration: 0.7,
+        y: -40,
+        duration: .4,
         ease: 'power3.out',
         onComplete: () => {
           gsap.to(this.target, {
             y: 0,
-            duration: 1.2,
+            duration: .7,
             ease: 'power1.inOut'
           })
         }

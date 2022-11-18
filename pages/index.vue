@@ -1,8 +1,9 @@
 <template>
     <div>
         <Start v-if='isStartShow' @onHideStart='hideStart' />
-        <WebGl ref="$webGl"/>
         <Timeline @next-poi="next"/>
+        <EventInfos/>
+        <WebGl ref="$webGl"/>
         <!-- <button class="next" @click="next">Next country</button> -->
     </div>
 </template>

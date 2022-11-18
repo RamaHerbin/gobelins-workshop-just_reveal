@@ -2,24 +2,6 @@
   <NuxtLayout />
 </template>
 
-<style>
-
-*,
-*::after,
-*::before {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background-color: #111;
-  font-family: 'Now';
-  font-weight: 400;
-  font-size: 20px;
-}
-
-</style>
-
 <script setup>
 
 import './assets/styles/main.scss';
