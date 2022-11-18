@@ -65,9 +65,9 @@ export const bgSound = new Howl({
 
 
   export const VoxSound = new Howl({
-    src : ['/audio/vox_news_wet/allemagne.mp3',
+    src : ['/audio/vox_news_wet/australia.mp3',
          '/audio/vox_news_wet/asian.mp3',
-         '/audio/vox_news_wet/australia.mp3',
+         '/audio/vox_news_wet/allemagne.mp3',
          '/audio/vox_news_wet/canada.mp3',
          '/audio/vox_news_wet/china.mp3',
          '/audio/vox_news_wet/crapaud.mp3',

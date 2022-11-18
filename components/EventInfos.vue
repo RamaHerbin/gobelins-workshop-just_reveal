@@ -57,13 +57,13 @@ watch(
               ease: CustomEase.create('cubic', '0.4, 0, 0, 1')
             }
           );
-          // if (VoxSound.play()) {
-          //   VoxSound.stop();
-          // };
-          // let id1 = VoxSound.play();
-          // // VoxSound.play('id'+$currentEvent.value.sound);
+          if (VoxSound.play()) {
+            VoxSound.stop();
+          };
 
-          // VoxSound.play(id1);
+
+          const sound = VoxSound.play();
+          VoxSound.play(sound);
 
         }
       }

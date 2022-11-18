@@ -1,3 +1,5 @@
+import {Howl, Howler} from 'howler';
+
 export const EVENTS = [
   // {
   //   "date": "2019/12/10",
@@ -17,7 +19,7 @@ export const EVENTS = [
     "source": "Good News Network : https://www.goodnewsnetwork.org/wind-farms-in-africa-aim-for-new-era-of-clean-energy-saving-billion-tons-of-co2/",
     "type": "environnement",
     "continent": "Afrique",
-    "sound": ""
+    "sound": "1"
   },
   {
     "date": "2020/03/29",
@@ -27,7 +29,7 @@ export const EVENTS = [
     "source": "Good News Network : https://www.goodnewsnetwork.org/madagascar-to-plant-60-million-trees-for-birthday/",
     "type": "environnement",
     "continent": "Afrique",
-    "sound": ""
+    "sound": "2"
   },
   {
     "date": "2021/11/06",
@@ -37,7 +39,7 @@ export const EVENTS = [
     "source": "Good News Network : https://www.goodnewsnetwork.org/refugees-in-cameroon-have-turned-a-treeless-desert-camp-into-a-thriving-forest/",
     "type": "environnement",
     "continent": "Afrique",
-    "sound": ""
+    "sound": "3"
   },
   {
     "date": "2020/11/19",
