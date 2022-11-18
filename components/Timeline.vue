@@ -56,19 +56,19 @@ import { EVENTS } from '../constants/events';
 import { removeAccents } from '../utils/typo';
 
 import {Howl, Howler} from 'howler';
-import { bgSound, startSound, scrollSound, gotonewEventSound , longswooshSound, shortswooshSound, AnimalSound, VoxSound } from './Soundsystem';
+import { scrollSound , longswooshSound, shortswooshSound, VoxSound } from './Soundsystem';
 
 
 
-const EVENTS = [
-  {date: '2020/2/16', type: 'santé'},
-  {date: '2020/2/30', type: 'technologie'},
-  {date: '2020/4/30', type: 'social'},
-  {date: '2020/5/10', type: 'santé'},
-  {date: '2020/6/16', type: 'santé'},
-  {date: '2020/7/16', type: 'santé'},
-  {date: '2020/8/16', type: 'santé'},
-]
+// const EVENTS = [
+//   {date: '2020/2/16', type: 'santé'},
+//   {date: '2020/2/30', type: 'technologie'},
+//   {date: '2020/4/30', type: 'social'},
+//   {date: '2020/5/10', type: 'santé'},
+//   {date: '2020/6/16', type: 'santé'},
+//   {date: '2020/7/16', type: 'santé'},
+//   {date: '2020/8/16', type: 'santé'},
+// ]
 const NB_YEARS = 2;
 const NB_DAYS = NB_YEARS * 12 * 30.5 +30 +21;
 
@@ -215,9 +215,6 @@ const onArrowClick = (direction) => {
   const nearestEventPos = getClosest(sliderOffsetX, ticksEvents.map(event => event.offsetLeft - wrapperWidth/2), direction);
   const positionToGo = -nearestEventPos + 7;
   goToEvent(positionToGo);
-  if(!bgSound.playing()) {
-      bgSound.play()
-    }
 }
 
 const goToEvent = (positionToGo) => {
@@ -242,11 +239,17 @@ const goToEvent = (positionToGo) => {
       onComplete: function() {
         dragObject[0].update();
         isMoving.value = false;
+        if(!shortswooshSound.play()){
+          shortswooshSound.play();
+            }
       },
       onInterrupt: function() {
         dragObject[0].update();
         isMoving.value = false;
         shortswooshSound.play();
+        if(shortswooshSound.play()){
+          shortswooshSound.fade(0.6, 0, 200);
+            }
       }
     });
   }
@@ -255,6 +258,7 @@ const goToEvent = (positionToGo) => {
 const throttleTickSound = useThrottleFn(() => {
   scrollSound.play();
 }, 50)
+
 
 </script>
 

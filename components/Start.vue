@@ -19,6 +19,8 @@
 
 import gsap, { Draggable } from 'gsap/all';
 import { InertiaPlugin } from 'gsap/InertiaPlugin.js';
+import { bgSound, startSound, } from './Soundsystem';
+
 
 const emit = defineEmits(['onHideStart']);
 
@@ -49,9 +51,17 @@ onMounted(() => {
           ease: 'power1.out',
           onComplete: () => {
             this.kill();
-            emit('onHideStart')
+            emit('onHideStart');
+            if(!bgSound.play()){
+            bgSound.play();
+            }
+            bgSound.fade(0.01,0.6,2000);
+
           }
         })
+      }
+      if(!startSound.play()){
+          startSound.play();
       }
     },
     onClick: function() {
