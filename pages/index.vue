@@ -1,4 +1,5 @@
 <template>
+    <LoadingScreen v-if='isLoading' @onHideLoading='hideLoading'/>
     <div>
         <Start v-if='isStartShow' @onHideStart='hideStart'/>
         <Timeline ref="$timeline" :EVENTS="EVENTS"  @next-poi="next"/>
@@ -16,6 +17,7 @@ import { EVENTS } from '../constants/events';
 const $webGl = ref(null)
 const $timeline = ref(null)
 const isStartShow = ref(true);
+const isLoading = ref(true);
 
 const next = (currentNew) => {
     $webGl.value.rotate(currentNew);
@@ -31,6 +33,9 @@ const hideStart = () => {
     isStartShow.value = false;
 }
 
+const hideLoading = () => {
+  isLoading.value = false;
+}
 
 </script>
 
