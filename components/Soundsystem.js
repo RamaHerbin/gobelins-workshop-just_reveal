@@ -63,6 +63,27 @@ export const bgSound = new Howl({
   // })
 
 
+  export const VoxSound1 = new Howl({
+    src : ['/audio/vox_news_wet/allemagne.mp3'],
+    volume: 0.5 * globalvolume,
+    autoplay:false,
+  })
+
+  export const VoxSound2 = new Howl({
+    src : ['/audio/vox_news_wet/canada.mp3'],
+    volume: 0.5 * globalvolume,
+    autoplay:false,
+  })
+
+  export const VoxSound3 = new Howl({
+    src : ['/audio/vox_news_wet/indonesia.mp3'],
+    volume: 0.5 * globalvolume,
+    autoplay:false,
+  })
+
+
+
+
 
   export const VoxSound = new Howl({
     src : ['/audio/vox_news_wet/australia.mp3',

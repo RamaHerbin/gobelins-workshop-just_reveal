@@ -22,10 +22,11 @@
 import { removeAccents } from '../utils/typo';
 import gsap from 'gsap/all';
 import CustomEase from 'gsap/CustomEase';
-import { shortswooshSound, animalSound, VoxSound } from './Soundsystem';
+import { shortswooshSound, animalSound, VoxSound1, VoxSound2, VoxSound3 } from './Soundsystem';
 // import { EVENTS } from '~~/constants';
 
 const currentEvent = useCurrentEvent();
+const random = useRandom();
 const isViewDetail = useDetailView();
 const scoppedEvent = ref(undefined);
 
@@ -57,13 +58,44 @@ watch(
               ease: CustomEase.create('cubic', '0.4, 0, 0, 1')
             }
           );
-          if (VoxSound.play()) {
-            VoxSound.stop();
-          };
+
+          let randomSound = 0
+          while (random.value === randomSound) {
+            randomSound = Math.floor(Math.random() * 3);
+          }
+
+          random.value = randomSound
+          console.log(random.value)
+
+          VoxSound1.stop();
+          VoxSound2.stop();
+          VoxSound3.stop();
+
+          switch (random) {
+            case 0:
+              VoxSound1.play();
+              break;
+
+            case 1:
+              VoxSound2.play();
+              break;
+
+            case 2:
+              VoxSound3.play();
+              break;
+
+            default:
+              VoxSound1.play();
+              break;
+          }
+
+          // if (VoxSound.play()) {
+          //   VoxSound.stop();
+          // };
 
 
-          const sound = VoxSound.play();
-          VoxSound.play(sound);
+          // const sound = VoxSound.play();
+          // VoxSound.play(sound);
 
         }
       }
