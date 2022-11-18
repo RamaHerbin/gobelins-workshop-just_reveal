@@ -21,6 +21,8 @@ export default class World {
 
     this.setupLights();
     this.setupBg();
+    this.setupSkyBox();
+    // this.setupParticles()
   }
 
 
@@ -44,11 +46,64 @@ export default class World {
   }
 
   setupSkyBox() {
-    this.skybox = new Skybox({scene: this.scene, renderer : this.renderer, camera: this.camera})
-    }
+  this.skybox = new Skybox({scene: this.scene, renderer : this.renderer, camera: this.camera})
+  }
 
   setupBg() {
     this.renderer.instance.setClearColor(0x040b4a);
+  }
+
+  setupParticles() {
+    this.particles = new Particles({scene: this.scene, renderer : this.renderer, camera: this.camera});
+  }
+
+
+
+  setupSphere() {
+    const globSize = 2;
+
+    const geometry = new THREE.SphereGeometry(globSize, 256, 256);
+    const material = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      metalness: 0,
+      roughness: 1,
+    });
+
+    const displacement = new THREE.TextureLoader().load(
+      "/img/bump_maps_custom_v2.webp"
+    );
+
+    
+    // const texture = new THREE.TextureLoader().load('/img/map_earth_color.jpg');
+    // const texture = new THREE.TextureLoader().load("/img/cot.webp");
+    // const emissive = new THREE.TextureLoader().load('/img/map_earth_color.jpg');
+
+    const sphere = new THREE.Mesh(geometry, material);
+
+    // material.map = texture;
+
+    material.displacementMap = displacement;
+    material.displacementScale = 0.2;
+    material.displacementBias = 1;
+
+    // material.emissive = 0x000000;
+    // material.emissiveIntensity = 0.1;
+    // material.emissiveMap = emissive
+
+    sphere.receiveShadow = true;
+    sphere.castShadow = true;
+
+    sphere.rotation.x = -0.3;
+    sphere.rotation.y = 1.5;
+    sphere.rotation.z = 0;
+
+    this.scene.instance.add(sphere);
+  }
+
+  setupMarker() {
+    this.marker = new Marker();
+
+    this.scene.instance.add(this.marker.container);
   }
 
   setupLights() {

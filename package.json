@@ -18,6 +18,7 @@
     "dat.gui": "^0.7.9",
     "gsap": "file:gsap-bonus.tgz",
     "hex-rgb": "^5.0.0",
+    "howler": "^2.2.3",
     "normalize.css": "^8.0.1",
     "three": "^0.146.0",
     "three-globe": "file:threeglobe-custom.tgz"

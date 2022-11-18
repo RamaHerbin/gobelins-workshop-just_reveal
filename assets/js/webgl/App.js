@@ -89,6 +89,8 @@ export default class Application {
     //this.renderer.render(this.scene.instance, this‡.camera.instance);
 
     // this.world.globe.update(this.time);
+    // this.world.particles.update(this.time);
+
     this.postProcessing.update();
   };
 }
