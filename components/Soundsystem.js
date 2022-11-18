@@ -18,7 +18,7 @@ export const bgSound = new Howl({
 
   export const scrollSound = new Howl({
     src : ['/audio/xp/scroll_single.mp3'],
-    volume: 1.1 * globalvolume,
+    volume: 1.2 * globalvolume,
     autoplay:false,
   })
 
@@ -31,7 +31,7 @@ export const bgSound = new Howl({
 
   export const shortswooshSound = new Howl({
     src : ['/audio/xp/swoosh2.mp3'],
-    volume: 0.4 * globalvolume,
+    volume: 0.5 * globalvolume,
     autoplay:false,
   })
 

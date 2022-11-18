@@ -50,7 +50,7 @@ export default class Globe {
     })
       .bumpImageUrl("/img/elevation_map_13_40-100.png")
       .polygonAltitude(0.03)
-      .polygonStrokeColor(() => "#111")
+      .polygonStrokeColor(() => "#ffffff")
       .showAtmosphere(true)
       .atmosphereColor("#308D98")
       .atmosphereAltitude(0.5)
@@ -67,7 +67,7 @@ export default class Globe {
     const displacement = await loader.load("/img/elevation_map_13_40-100.png");
 
     globeMaterial.displacementMap = displacement;
-    globeMaterial.displacementScale = 7;
+    globeMaterial.displacementScale = 4;
     globeMaterial.displacementBias = 0.3;
     globeMaterial.lights = true;
 
