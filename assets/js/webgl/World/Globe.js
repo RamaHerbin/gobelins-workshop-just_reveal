@@ -93,24 +93,20 @@ export default class Globe {
       el.date == news.date
     )
 
-    if (isAlreadyOnScene.length == 0) {
+    if (isAlreadyOnScene.length === 0) {
       this.dataOnScene.push(currentData);
+
+      this.ringsOnScene.push({
+        lat: currentData.localisation.lat,
+        lng: currentData.localisation.long
+      })
     }
-
-
-
-    this.ringsOnScene.push({
-      lat: currentData.localisation.lat,
-      lng: currentData.localisation.long
-    })
 
     const ringColor = COLORS.find(el => el.label === removeAccents(currentData.type))?.hex.primary;
     const ringRgb = hexRgb(ringColor);
     const higherNumber = Math.min(...[ringRgb.red, ringRgb.green, ringRgb.blue]);
-    console.log(higherNumber);
 
     const colorInterpolator = t => `rgba(${ringRgb.red - higherNumber}, ${ringRgb.green - higherNumber}, ${ringRgb.blue - higherNumber}, ${1 - t})`;
-
 
     function polar2Cartesian(lat, lng, relAltitude = 0) {
       const phi = (90 - lat) * Math.PI / 180;
@@ -123,7 +119,6 @@ export default class Globe {
       };
     }
     const globeCenter = this.scene.instance.localToWorld(new THREE.Vector3(0, 0, 0)); // translate from local to world coords
-
 
     this.globe
       .ringsData(this.ringsOnScene)

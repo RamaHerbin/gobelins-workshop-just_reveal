@@ -54,9 +54,9 @@ onMounted(() => {
       if (InertiaPlugin.getVelocity(this.target, "y") < -600) {
         this.disable();
         gsap.to(this.target, {
-          y: -window.innerHeight * 2,
+          y: -window.innerHeight,
           opacity: 0,
-          duration: 1.6,
+          duration: 0.8,
           ease: 'power1.out',
           onComplete: () => {
             this.kill();
