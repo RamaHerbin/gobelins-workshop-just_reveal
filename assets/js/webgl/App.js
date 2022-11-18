@@ -77,7 +77,7 @@ export default class Application {
 
   setupWorld() {
     //TODO: INIT WORLD
-    this.world = new World({scene: this.scene, time: this.time, renderer : this.renderer, camera: this.camera});
+    this.world = new World({scene: this.scene, time: this.time, renderer : this.renderer, camera: this.camera, $canvas:this.$canvas});
     this.scene.instance.add(this.world.container);
 
   }

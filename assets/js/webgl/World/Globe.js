@@ -16,19 +16,25 @@ export default class Globe {
     this.scene = _option.scene;
     this.camera = _option.camera;
     this.time = _option.time;
+    this.$canvas = _option.$canvas;
 
     this.globe = null;
     this.dataOnScene = [];
-
+    this.arrayOfMeshesToCast = []
     this.init();
     // this.setupSea();
 
     this.updateCountry = this.updateCountry.bind(this);
     this.update = this.update.bind(this);
 
-    this.pointerDown = false;
+    this.isPointerDown = false;
+    this.isCursorMoved = false;
 
-    // this.initGlobeControls();
+
+    this.mouseX = 0;
+    this.mouseY = 0;
+
+    this.initGlobeControls();
   }
 
   async init() {
@@ -79,13 +85,22 @@ export default class Globe {
 
     this.dataOnScene.push(currentData);
 
+    console.log('this.dataOnScene :>> ', this.dataOnScene);
+    let test = []
+
+    test.push({
+      lat: currentData.localisation.lat,
+      lng: currentData.localisation.long
+    })
+
+
     this.globe
-      // .ringsData(this.dataOnScene)
-      // .ringAltitude(1)
-      // .ringColor("rgba(255,255,50, 1)")
-      // .ringMaxRadius(5)
-      // .ringPropagationSpeed(2)
-      // .ringRepeatPeriod(1)
+      .ringsData(test)
+      .ringAltitude(.1)
+      .ringColor("0xffffff")
+      .ringMaxRadius(2)
+      .ringPropagationSpeed(.5)
+      .ringRepeatPeriod(.5)
       .customLayerData(this.dataOnScene)
       .customThreeObject(
         (d) =>
@@ -103,18 +118,27 @@ export default class Globe {
             ALTITUDE
           )
         );
+
+        this.arrayOfMeshesToCast.push(obj)
+          obj.name = "test"
       });
 
+      this.centerPoints(currentData)
+
+    console.log('this.globe :>> ', this.globe);
+  }
+
+  centerPoints(data, modifierX = 0,modifierY = 0) {
     const startX = this.globe.rotation.x;
     const startY = -this.globe.rotation.y;
-    const endX = currentData.localisation.lat * (Math.PI / 180);
-    const endY = currentData.localisation.long * (Math.PI / 180);
+    const endX = data.localisation.lat * (Math.PI / 180);
+    const endY = data.localisation.long * (Math.PI / 180);
     const anim = { x: startX, y: startY };
 
     gsap.to(anim, {
       duration: 1.2,
-      y: endY,
-      x: endX,
+      y: endY + modifierY,
+      x: endX + modifierX,
       onUpdate: () => {
         this.globe.rotation.set(anim.x, -anim.y, 0);
       },
@@ -122,26 +146,51 @@ export default class Globe {
   }
 
   initGlobeControls() {
-    window.addEventListener("pointerdown", () => {
-      this.pointerDown = true;
+
+    this.$canvas.addEventListener("pointerdown", (e) => {
+      this.isPointerDown = true;
+      this.mouseX = e.clientX;
+      this.mouseY = e.clientY;
     });
 
-    window.addEventListener("pointerup", () => {
-      this.pointerDown = false;
+    this.$canvas.addEventListener("pointerup", (e) => {
+      this.isPointerDown = false;
+
+      if (!this.isCursorMoved) {
+        this.checkSurface(e.offsetX, e.offsetY)
+      }
+      this.isCursorMoved = false;
     });
 
-    window.addEventListener("mousemove", (e) => {
-      if (this.pointerDown) {
-        console.log("e :>> ", e);
-
-        var deltaX = evt.clientX - mouseX,
-          deltaY = evt.clientY - mouseY;
-        mouseX = evt.clientX;
-        mouseY = evt.clientY;
+    this.$canvas.addEventListener("mousemove", (e) => {
+      if (this.isPointerDown) {
+        this.isCursorMoved = true;
+        var deltaX = e.clientX - this.mouseX,
+          deltaY = e.clientY - this.mouseY;
+        this.mouseX = e.clientX;
+        this.mouseY = e.clientY;
         this.globe.rotation.y += deltaX / 100;
         this.globe.rotation.x += deltaY / 100;
       }
     });
+  }
+
+  checkSurface(x, y) {
+    const mouse = new THREE.Vector2();
+  	const raycaster = new THREE.Raycaster();
+
+    mouse.x = ( x / window.innerWidth ) * 2 - 1;
+		mouse.y = - ( y / window.innerHeight ) * 2 + 1;
+		raycaster.setFromCamera( mouse, this.camera.instance );
+		let intersects = raycaster.intersectObjects( this.arrayOfMeshesToCast, true );
+
+    
+		if (intersects.length > 0) {
+      this.globe.showAtmosphere(false)
+
+      this.centerPoints(intersects[0].object.__data, -.25, -.25)
+      gsap.to(this.globe.position, {duration:1, x:-24, y: -10, z: 14})
+		}
   }
 
   // ADD WATER
