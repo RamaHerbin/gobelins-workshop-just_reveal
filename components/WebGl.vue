@@ -5,23 +5,29 @@
 <script setup>
 import Application from "/assets/js/webgl/App.js";
 
+const previousNews = usePreviousNews();
+const emit = defineEmits(['previousNewsClicked'])
 const $canvas = ref(null);
-
 let app;
-let index = 0
 
 onMounted(async () => {
   app = new Application({
-    $canvas: $canvas.value,
+    $canvas: $canvas.value
   });
-  console.log('app :>> ', app.world.globe);
 
 });
-
 
 const rotate = (news) => {
   app.world.globe.updateCountry(news)
 }
+
+watch(previousNews, () => {
+  if (previousNews.value){ 
+    emit('previousNewsClicked', previousNews.value)
+  };
+
+})
+
 
 defineExpose({rotate:rotate})
 
