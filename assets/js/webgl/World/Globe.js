@@ -23,6 +23,7 @@ export default class Globe {
 
     this.globe = null;
     this.dataOnScene = [];
+    this.ringsOnScene = [];
     this.arrayOfMeshesToCast = []
     this.init();
     // this.setupSea();
@@ -96,9 +97,9 @@ export default class Globe {
       this.dataOnScene.push(currentData);
     }
 
-    let test = []
 
-    test.push({
+
+    this.ringsOnScene.push({
       lat: currentData.localisation.lat,
       lng: currentData.localisation.long
     })
@@ -125,7 +126,7 @@ export default class Globe {
 
 
     this.globe
-      .ringsData(test)
+      .ringsData(this.ringsOnScene)
       .ringAltitude(.1)
       .ringColor(() => colorInterpolator)
       .ringMaxRadius(10)
