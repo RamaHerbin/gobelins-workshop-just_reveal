@@ -83,9 +83,14 @@ export default class Globe {
     let color = "green";
     let currentData = news;
 
-    this.dataOnScene.push(currentData);
+    let isAlreadyOnScene = this.dataOnScene.filter(el => 
+      el.date == news.date
+    )
 
-    console.log('this.dataOnScene :>> ', this.dataOnScene);
+    if (isAlreadyOnScene.length == 0) {
+      this.dataOnScene.push(currentData);
+    }
+
     let test = []
 
     test.push({
@@ -124,8 +129,6 @@ export default class Globe {
       });
 
       this.centerPoints(currentData)
-
-    console.log('this.globe :>> ', this.globe);
   }
 
   centerPoints(data, modifierX = 0,modifierY = 0) {
@@ -134,6 +137,8 @@ export default class Globe {
     const endX = data.localisation.lat * (Math.PI / 180);
     const endY = data.localisation.long * (Math.PI / 180);
     const anim = { x: startX, y: startY };
+
+    gsap.to(this.globe.position, {duration:1, x: -18})
 
     gsap.to(anim, {
       duration: 1.2,
@@ -183,13 +188,18 @@ export default class Globe {
 		mouse.y = - ( y / window.innerHeight ) * 2 + 1;
 		raycaster.setFromCamera( mouse, this.camera.instance );
 		let intersects = raycaster.intersectObjects( this.arrayOfMeshesToCast, true );
-
     
 		if (intersects.length > 0) {
-      this.globe.showAtmosphere(false)
 
-      this.centerPoints(intersects[0].object.__data, -.25, -.25)
-      gsap.to(this.globe.position, {duration:1, x:-24, y: -10, z: 14})
+      const previousNews = usePreviousNews();
+
+      // watched value on webgl.vue
+      previousNews.value = intersects[0].object.__data;
+
+      // ZOOM POSITION
+      // this.globe.showAtmosphere(false)
+      // this.centerPoints(intersects[0].object.__data, -.25, -.25)
+      // gsap.to(this.globe.position, {duration:1, x:-24, y: -10, z: 14})
 		}
   }
 
@@ -224,8 +234,6 @@ export default class Globe {
 
     // this.waveMat.lights = true;
 
-    console.log(this.time);
-
     const waves = new THREE.Mesh(geometryWaves, this.waveMat);
     const sea = new THREE.Mesh(geometrySea, material);
 
@@ -243,7 +251,6 @@ export default class Globe {
   update(time) {
     this.time = time;
     this.waveMat.uniforms.uTime.value = this.time / 15;
-    // console.log(this.time);
   }
 
   // DRAFTS
