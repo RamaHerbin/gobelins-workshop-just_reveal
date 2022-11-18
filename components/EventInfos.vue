@@ -22,6 +22,8 @@
 import { removeAccents } from '../utils/typo';
 import gsap from 'gsap/all';
 import CustomEase from 'gsap/CustomEase';
+import { shortswooshSound, animalSound, VoxSound } from './Soundsystem';
+// import { EVENTS } from '~~/constants';
 
 const currentEvent = useCurrentEvent();
 const isViewDetail = useDetailView();
@@ -55,6 +57,14 @@ watch(
               ease: CustomEase.create('cubic', '0.4, 0, 0, 1')
             }
           );
+          if (VoxSound.play()) {
+            VoxSound.stop();
+          };
+
+
+          const sound = VoxSound.play();
+          VoxSound.play(sound);
+
         }
       }
     );

@@ -61,7 +61,7 @@ export default class Globe {
     globeMaterial.color = new THREE.Color(0xffffff);
     globeMaterial.emissive = new THREE.Color(0xffffff);
     globeMaterial.emissiveIntensity = 0.3;
-    globeMaterial.shininess = 1;
+    globeMaterial.shininess = 0.2;
 
     const displacement = await loader.load("/img/elevation_map_13_40-100.png");
 
@@ -69,6 +69,8 @@ export default class Globe {
     globeMaterial.displacementScale = 7;
     globeMaterial.displacementBias = 0.3;
     globeMaterial.lights = true;
+
+
 
     this.globe.receiveShadow = true;
     this.globe.castShadow = true;

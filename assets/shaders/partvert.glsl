@@ -2,7 +2,8 @@ precision highp float;
 
 
 
-    // PERLIN NOISE
+
+ // PERLIN NOISE
 
 
     vec4 ppermute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
@@ -88,52 +89,39 @@ precision highp float;
     }
 
     vec3 getPerlinTurbulence( vec2 position, float scale, float strength, float time ) {
-    vec3 perlin = pnoiseVec3( vec3( position.xy, time ) * scale * 10. );
+    vec3 perlin = pnoiseVec3( vec3( position.xy, time ) * scale );
     perlin *= strength;
     return perlin;
     }
 
 
 
-// add noise to the color
 
 
-   uniform float uTime;
+uniform mat4 projectionMatrix;
+uniform mat4 modelViewMatrix;
+uniform float uTime;
 
-   uniform float uStrength;
-   uniform float uScale;
+attribute vec3 position;
+attribute vec3 color;
+attribute float random;
 
-
-
-varying vec2 vUv;
+varying vec3 vColor;
 varying vec3 vPos;
+
 
 void main() {
 
+    gl_Position = pos;
+    gl_PointSize = 20.;
+   
+    vec3 newPos = position;
+    newPos.y += sin(uTime + random * 1000.);
 
-   // noise noir et blanc sur le blob
-   // float noiseColor = pnoise(vec3(vPos.xy, uTime));
-   float noiseColor = pnoise(vec3(vPos.xy, uTime));
-
-
-   vec3 colorA = vec3(0.65, 0.65, 0.65);
-   vec3 colorB = vec3(0.62,0.62,0.65);
-   vec3 colorMix = mix(colorA, colorB, noiseColor);
+    vPos = newPos;
 
 
-   // pour associer des turbulences (donc changement de couleur au noise)
-   // On Map l'UV mais ça créé une ligne au moment ou les textures se rejoignent
-   // vec3 result = getPerlinTurbulence(vec2(vUv), uScale, uStrength,uTime*0.05);
+   vec4 pos = projectionMatrix * modelViewMatrix * vec4( newPos, 1. );
 
-   // utiliser vPos.xy au lieu de vUv ça permet de ne pas avoir la ligne de séparation au moment ou la tecture se rejoint
-   vec3 result = getPerlinTurbulence(vec2(vPos.xy), uScale, uStrength,uTime);
-
-   vec4 color = vec4(vec3(result), 0.7);
-
-   gl_FragColor = vec4(colorMix,1);
+   vColor = color;
 }
-
-
-
-// tintedSphere = color 1 + color 2 + color 3 /2
-// then multiply color with 
