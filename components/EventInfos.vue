@@ -71,7 +71,7 @@ watch(
           VoxSound2.stop();
           VoxSound3.stop();
 
-          switch (random) {
+          switch (randomSound) {
             case 0:
               VoxSound1.play();
               break;
