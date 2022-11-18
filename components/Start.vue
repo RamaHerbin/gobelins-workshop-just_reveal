@@ -102,7 +102,7 @@ onMounted(() => {
     right: 0;
     height: 300vh;
     background: linear-gradient(180deg, rgba(5, 15, 52, 0.8) 0%, rgba(5, 15, 52, 0.24) 100%);
-    backdrop-filter: blur(15px);
+    // backdrop-filter: blur(15px);
     pointer-events: none;
   }
 
