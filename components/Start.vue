@@ -20,7 +20,6 @@
 <script setup>
 
 import gsap, { Draggable } from 'gsap/all';
-import { InertiaPlugin } from 'gsap/InertiaPlugin.js';
 import { bgSound, startSound, } from './Soundsystem';
 
 
@@ -28,6 +27,7 @@ const emit = defineEmits(['onHideStart']);
 
 let dragObject = null;
 let divRef = ref(null);
+let isDraging = false;
 
 onMounted(() => {
   setTimeout(() => {
@@ -50,8 +50,12 @@ onMounted(() => {
     snap: {
       y: [0]
     },
-    onDragEnd: function() {
-      if (InertiaPlugin.getVelocity(this.target, "y") < -600) {
+    onThrowComplete: function () {
+      isDraging = false;
+    },
+    onDrag: function () {
+      isDraging = true;
+      if (this.y < -100) {
         this.disable();
         gsap.to(this.target, {
           y: -window.innerHeight,
@@ -69,11 +73,9 @@ onMounted(() => {
           }
         })
       }
-      if(!startSound.play()){
-          startSound.play();
-      }
     },
     onClick: function() {
+      if (isDraging) return
       gsap.to(this.target, {
         y: -40,
         duration: .4,

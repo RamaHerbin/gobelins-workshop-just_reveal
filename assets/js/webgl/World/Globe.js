@@ -48,7 +48,7 @@ export default class Globe {
       waitForGlobeReady: true,
       animateIn: true,
     })
-      .bumpImageUrl("/img/elevation_map_13_40-100.png")
+      .bumpImageUrl("/img/elevation_map_13_40-100.webp")
       .polygonAltitude(0.03)
       .polygonStrokeColor(() => "#ffffff")
       .showAtmosphere(true)
@@ -64,7 +64,7 @@ export default class Globe {
     globeMaterial.emissiveIntensity = 0.3;
     globeMaterial.shininess = 0.2;
 
-    const displacement = await loader.load("/img/elevation_map_13_40-100.png");
+    const displacement = await loader.load("/img/elevation_map_13_40-100.webp");
 
     globeMaterial.displacementMap = displacement;
     globeMaterial.displacementScale = 4;
@@ -213,8 +213,6 @@ export default class Globe {
 		raycaster.setFromCamera( mouse, this.camera.instance );
 		let intersects = raycaster.intersectObjects( this.arrayOfMeshesToCast, true );
     
-    console.log(intersects);
-
 		if (intersects.length > 0) {
 
       const previousNews = usePreviousNews();
@@ -281,38 +279,38 @@ export default class Globe {
 
   // DRAFTS
   setupArc() {
-    // setTimeout(() => {
-    //   this.globe
-    //     .arcsData(travelHistory.flights)
-    //     .arcColor((e) => {
-    //       return e.status ? "#9cff00" : "#FF4000";
-    //     })
-    //     .arcAltitude((e) => {
-    //       return e.arcAlt;
-    //     })
-    //     .arcStroke((e) => {
-    //       return e.status ? 0.5 : 0.3;
-    //     })
-    //     .arcDashLength(0.9)
-    //     .arcDashGap(4)
-    //     .arcDashAnimateTime(1000)
-    //     .arcsTransitionDuration(1000)
-    //     .arcDashInitialGap((e) => e.order * 1)
-    //     .labelsData(airportHistory.airports)
-    //     .labelColor(() => "#ffcb21")
-    //     .labelDotOrientation((e) => {
-    //       return e.text === "ALA" ? "top" : "right";
-    //     })
-    //     .labelDotRadius(0.3)
-    //     .labelSize((e) => e.size)
-    //     .labelText("city")
-    //     .labelResolution(6)
-    //     .labelAltitude(0.01)
-    //     .pointsData(airportHistory.airports)
-    //     .pointColor(() => "#ffffff")
-    //     .pointsMerge(true)
-    //     .pointAltitude(0.07)
-    //     .pointRadius(0.05);
-    // }, 1000);
+    setTimeout(() => {
+      this.globe
+        .arcsData(travelHistory.flights)
+        .arcColor((e) => {
+          return e.status ? "#9cff00" : "#FF4000";
+        })
+        .arcAltitude((e) => {
+          return e.arcAlt;
+        })
+        .arcStroke((e) => {
+          return e.status ? 0.5 : 0.3;
+        })
+        .arcDashLength(0.9)
+        .arcDashGap(4)
+        .arcDashAnimateTime(1000)
+        .arcsTransitionDuration(1000)
+        .arcDashInitialGap((e) => e.order * 1)
+        .labelsData(airportHistory.airports)
+        .labelColor(() => "#ffcb21")
+        .labelDotOrientation((e) => {
+          return e.text === "ALA" ? "top" : "right";
+        })
+        .labelDotRadius(0.3)
+        .labelSize((e) => e.size)
+        .labelText("city")
+        .labelResolution(6)
+        .labelAltitude(0.01)
+        .pointsData(airportHistory.airports)
+        .pointColor(() => "#ffffff")
+        .pointsMerge(true)
+        .pointAltitude(0.07)
+        .pointRadius(0.05);
+    }, 1000);
   }
 }

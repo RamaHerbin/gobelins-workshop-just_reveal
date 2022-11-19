@@ -1,8 +1,5 @@
-import * as THREE from "three";
-  // import * as dat from "dat.gui";
-
 import Renderer from "./Renderer";
-import Sizes from "../utils/Sizes";
+import Sizes from "./utils/Sizes";
 import Camera from "./Camera";
 import Scene from "./Scene";
 import World from "./World";
@@ -31,9 +28,6 @@ export default class Application {
     });
 
     this.composer = null;
-    this.gui = null;
-
-    this.setupGUI();
 
     this.setupCamera();
 
@@ -52,27 +46,15 @@ export default class Application {
     this.config.debug = window.location.hash === "#debug";
   }
 
-  async setupGUI() {
-
-    //   this.guiTest = (await import("dat.gui")).default;
-    //   console.log('this.guiTest :>> ', this.guiTest);
-
-    // this.gui = new this.guiTest.dat.GUI();
-    // let fSettings = this.gui.addFolder("Settings");
-    // fSettings.open();
-  }
-
   setupCamera() {
     this.camera = new Camera({
       time: this.time,
       sizes: this.sizes,
-      gui: this.gui,
       renderer: this.renderer,
     });
 
     this.scene.instance.add(this.camera.container);
   }
-
 
   setupWorld() {
     //TODO: INIT WORLD
@@ -81,15 +63,11 @@ export default class Application {
 
   }
 
-
   onFrame = () => {
     this.time += 0.1;
 
     requestAnimationFrame(this.onFrame);
     //this.renderer.render(this.scene.instance, this‡.camera.instance);
-
-    // this.world.globe.update(this.time);
-    // this.world.particles.update(this.time);
 
     this.postProcessing.update();
   };

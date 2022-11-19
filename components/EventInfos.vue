@@ -65,7 +65,6 @@ watch(
           }
 
           random.value = randomSound
-          console.log(random.value)
 
           VoxSound1.stop();
           VoxSound2.stop();
