@@ -12,11 +12,11 @@ import PostProcessing from "./PostProcessing";
 export default class Application {
   constructor(_params) {
     this.time = 0;
-    
+
     this.$canvas = _params.$canvas;
 
     this.sizes = new Sizes();
-    this.scene = new Scene({app: this});
+    this.scene = new Scene({ app: this });
     this.renderer = new Renderer(this.$canvas, this.sizes.viewport);
 
     this.sizes.on("resize", () => {
@@ -31,7 +31,11 @@ export default class Application {
 
     this.setupCamera();
 
-    this.postProcessing = new PostProcessing({scene: this.scene, renderer : this.renderer, camera: this.camera});
+    this.postProcessing = new PostProcessing({
+      scene: this.scene,
+      renderer: this.renderer,
+      camera: this.camera,
+    });
 
     this.world = null;
     this.setupWorld();
@@ -58,9 +62,16 @@ export default class Application {
 
   setupWorld() {
     //TODO: INIT WORLD
-    this.world = new World({scene: this.scene, time: this.time, renderer : this.renderer, camera: this.camera, $canvas:this.$canvas});
-    this.scene.instance.add(this.world.container);
+    this.world = new World({
+      scene: this.scene,
+      time: this.time,
+      renderer: this.renderer,
+      camera: this.camera,
+      $canvas: this.$canvas,
+      sizes: this.sizes,
 
+    });
+    this.scene.instance.add(this.world.container);
   }
 
   onFrame = () => {

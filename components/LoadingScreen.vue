@@ -101,4 +101,10 @@ onMounted(() => {
   }
 }
 
+@media (max-width: 1000px) {
+  .loading h1 {
+   font-size: 1.5rem;
+  }
+}
+
 </style>

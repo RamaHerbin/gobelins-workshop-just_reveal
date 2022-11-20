@@ -1,8 +1,7 @@
 import * as THREE from "three";
 import { gsap } from "gsap";
 import hexRgb from 'hex-rgb';
-
-import data from "/assets/data.json";
+import ThreeGlobe from "three-globe";
 
 import oceanFrag from "assets/shaders/oceanFrag.glsl";
 import oceanVert from "assets/shaders/oceanVert.glsl";
@@ -20,6 +19,7 @@ export default class Globe {
     this.camera = _option.camera;
     this.time = _option.time;
     this.$canvas = _option.$canvas;
+    this.sizes = _option.sizes;
 
     this.globe = null;
     this.dataOnScene = [];
@@ -34,6 +34,8 @@ export default class Globe {
     this.isPointerDown = false;
     this.isCursorMoved = false;
 
+    this.WINDOW_WIDTH = this.sizes.viewport.width;
+    this.WINDOW_HEIGHT = this.sizes.viewport.height;
 
     this.mouseX = 0;
     this.mouseY = 0;
@@ -42,7 +44,6 @@ export default class Globe {
   }
 
   async init() {
-    const ThreeGlobe = await (await import("three-globe")).default;
 
     this.globe = new ThreeGlobe({
       waitForGlobeReady: true,
@@ -75,9 +76,14 @@ export default class Globe {
 
     this.globe.receiveShadow = true;
     this.globe.castShadow = true;
-    this.globe.scale.set(0.2, 0.2, 0.2);
     this.globe.rotation.set(0, 0, 0);
     this.globe.position.set(0, -6, 0);
+
+    if (this.WINDOW_WIDTH < 1000) {
+     this.globe.scale.set(0.14, 0.14, 0.14);
+    } else {
+     this.globe.scale.set(0.2, 0.2, 0.2);
+    }
 
     this.container.add(this.globe);
 
@@ -108,16 +114,6 @@ export default class Globe {
 
     const colorInterpolator = t => `rgba(${ringRgb.red - higherNumber}, ${ringRgb.green - higherNumber}, ${ringRgb.blue - higherNumber}, ${1 - t})`;
 
-    function polar2Cartesian(lat, lng, relAltitude = 0) {
-      const phi = (90 - lat) * Math.PI / 180;
-      const theta = (90 - lng) * Math.PI / 180;
-      const r = 100 * (1 + relAltitude);
-      return {
-        x: r * Math.sin(phi) * Math.cos(theta),
-        y: r * Math.cos(phi),
-        z: r * Math.sin(phi) * Math.sin(theta)
-      };
-    }
     const globeCenter = this.scene.instance.localToWorld(new THREE.Vector3(0, 0, 0)); // translate from local to world coords
 
     this.globe
@@ -162,7 +158,10 @@ export default class Globe {
     const endY = data.localisation.long * (Math.PI / 180);
     const anim = { x: startX, y: startY };
 
-    gsap.to(this.globe.position, {duration:1, x: -18})
+    if (this.WINDOW_WIDTH > 1000)
+      gsap.to(this.globe.position, {duration:1, x: -18})
+    else 
+      gsap.to(this.globe.position, {duration:1, y: 6})
 
     gsap.to(anim, {
       duration: 1.2,
@@ -174,34 +173,49 @@ export default class Globe {
     });
   }
 
+  pointerDown = (e) => {
+    const [x,y] = parseMouseEvent(e);
+
+    this.isPointerDown = true;
+    this.mouseX = x;
+    this.mouseY = y;
+  }
+
+  pointerUp = (e) => {
+    const [x,y] = parseMouseEvent(e);
+    
+    this.isPointerDown = false;
+
+    if (!this.isCursorMoved) {
+      this.checkSurface(x, y)
+    }
+    this.isCursorMoved = false;
+  }
+
+  pointerMove = (e) => {
+    const [x,y] = parseMouseEvent(e);
+    
+    if (this.isPointerDown) {
+      this.isCursorMoved = true;
+      var deltaX = x - this.mouseX,
+        deltaY = y - this.mouseY;
+      this.mouseX = x;
+      this.mouseY = y;
+      this.globe.rotation.y += deltaX / 100;
+      this.globe.rotation.x += deltaY / 100;
+    }
+  }
+
   initGlobeControls() {
 
-    this.$canvas.addEventListener("pointerdown", (e) => {
-      this.isPointerDown = true;
-      this.mouseX = e.clientX;
-      this.mouseY = e.clientY;
-    });
+    this.$canvas.addEventListener("pointerdown", this.pointerDown);
+    this.$canvas.addEventListener("touchstart", this.pointerDown);
 
-    this.$canvas.addEventListener("pointerup", (e) => {
-      this.isPointerDown = false;
+    this.$canvas.addEventListener("touchstop", this.pointerUp);
+    this.$canvas.addEventListener("pointerup", this.pointerUp);
 
-      if (!this.isCursorMoved) {
-        this.checkSurface(e.offsetX, e.offsetY)
-      }
-      this.isCursorMoved = false;
-    });
-
-    this.$canvas.addEventListener("mousemove", (e) => {
-      if (this.isPointerDown) {
-        this.isCursorMoved = true;
-        var deltaX = e.clientX - this.mouseX,
-          deltaY = e.clientY - this.mouseY;
-        this.mouseX = e.clientX;
-        this.mouseY = e.clientY;
-        this.globe.rotation.y += deltaX / 100;
-        this.globe.rotation.x += deltaY / 100;
-      }
-    });
+    this.$canvas.addEventListener("mousemove", this.pointerMove);
+    this.$canvas.addEventListener("touchmove", this.pointerMove);
   }
 
   checkSurface(x, y) {
@@ -314,3 +328,18 @@ export default class Globe {
     }, 1000);
   }
 }
+
+
+const parseMouseEvent = (e) => {
+  let x;
+  let y;
+
+  if (e.changedTouches && e.changedTouches.length) {
+    x = e.changedTouches[0].clientX;
+    y = e.changedTouches[0].clientY;
+    return [x, y];
+  }
+  x = e.x;
+  y = e.y;
+  return [x, y];
+};

@@ -53,9 +53,18 @@ onMounted(() => {
     onThrowComplete: function () {
       isDraging = false;
     },
+    onDragEnd: function () {
+      if (this.y > -90) {
+        gsap.to(this.target, {
+        y: 0,
+        duration: .4,
+        ease: 'power3.out',
+      })
+      }
+    },
     onDrag: function () {
       isDraging = true;
-      if (this.y < -100) {
+      if (this.y < -90) {
         this.disable();
         gsap.to(this.target, {
           y: -window.innerHeight,

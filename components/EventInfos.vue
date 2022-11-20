@@ -139,6 +139,8 @@ const getFormattedLink = (link) => {
   pointer-events: none;
 }
 
+
+
 .event-infos {
   pointer-events: all;
   position: absolute;
@@ -219,5 +221,16 @@ const getFormattedLink = (link) => {
     }
   }
 }
+
+
+
+@media (max-width: 1000px) {
+  .event-infos {
+    top: unset;
+    bottom: 4%;
+  }
+}
+
+
 
 </style>
