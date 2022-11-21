@@ -128,6 +128,7 @@ const getFormattedLink = (link) => {
 
 .wrapper {
   position: absolute;
+  overflow: hidden;
   z-index: 99;
   left: 50%;
   top: 0;
