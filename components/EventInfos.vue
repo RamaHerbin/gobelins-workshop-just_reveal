@@ -153,6 +153,10 @@ const getFormattedLink = (link) => {
   max-width: 495px;
   opacity: 0;
 
+  &.active {
+    opacity: 1;
+  }
+
   @each $color-label, $degrees in $colors {
     &--c-#{$color-label} {
       @each $degree-label, $degree in $degrees {
@@ -224,10 +228,24 @@ const getFormattedLink = (link) => {
 
 
 
-@media (max-width: 1000px) {
+@media (max-width: 900px) {
+  .wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+  }
+
   .event-infos {
+    position: relative;
     top: unset;
+    // right: 50%;
     bottom: 4%;
+  }
+}
+
+@media (max-width: 700px) {
+  .event-infos {
+    padding-left: 30px;
   }
 }
 

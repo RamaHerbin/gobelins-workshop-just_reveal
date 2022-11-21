@@ -118,7 +118,7 @@ export default class Globe {
 
     this.globe
       .ringsData(this.ringsOnScene)
-      .ringAltitude(.1)
+      .ringAltitude(.06)
       .ringColor(() => colorInterpolator)
       .ringMaxRadius(10)
       .ringPropagationSpeed(3)
@@ -158,10 +158,10 @@ export default class Globe {
     const endY = data.localisation.long * (Math.PI / 180);
     const anim = { x: startX, y: startY };
 
-    if (this.WINDOW_WIDTH > 1000)
+    if (this.WINDOW_WIDTH > 900)
       gsap.to(this.globe.position, {duration:1, x: -18})
     else 
-      gsap.to(this.globe.position, {duration:1, y: 6})
+      gsap.to(this.globe.position, {duration:1, y: 4})
 
     gsap.to(anim, {
       duration: 1.2,
